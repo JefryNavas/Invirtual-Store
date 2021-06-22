@@ -10,30 +10,46 @@
                 </div>
                 <div class="modal-body text-center">
                     <img src="assets/img/logoT.png" width="20%" alt="">
-                    <form class="user" action="registrarse.html">
+                    <form class="user" action="register" method="POST">
 
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user" placeholder="Nombre y Apellido...">
+                            <input type="text" class="form-control form-control-user" name="name" placeholder="Nombre y Apellido...">
                         </div>
                         <div class="form-group">
-                            <select class="form-control" style="border-radius: 10rem" id="exampleFormControlSelect1">
-                                <option selected>Función de la empresa</option>
+                            <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
+                                <option selected value="">Función de la empresa</option>
+                                <option value="2">Empleado</option>
+                                <option value="3">Repartidor</option>
                               </select>
                         </div>
 
                         <div class="form-group">
-                            <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Correo Electrónico...">
+                            <input type="email" class="form-control form-control-user" name="user" placeholder="Correo Electrónico...">
                         </div>
                         <div class="form-group">
-                            <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Contraseña...">
+                            <input type="password" class="form-control form-control-user" name="pass" placeholder="Contraseña...">
                         </div>
                         <hr>
-                        <a class="btn btn-primary btn-user btn-block">
-                            Crear cuenta
-                        </a>
+                         <input type="submit" class="btn btn-primary btn-user btn-block" value="Iniciar Sesión">
                     </form>
                 </div>
 
             </div>
         </div>
     </div>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: 'Registro',
+            text: '{{alertMessage}}',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+        }).then(()=>{
+            window.location = '/'
+        })
+    </script>
+    {{/if}}
+
+  

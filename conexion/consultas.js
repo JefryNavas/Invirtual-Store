@@ -15,10 +15,9 @@ const insertUser = async(tipo, nombre, email, password) => {
         const consulta = `insert into empleado(id_tipo,nombre,email,password) values ('${tipo}','${nombre}','${email}','${password}')`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
-            pool.end();
-            return "Usuario Insertado";
-        } else pool.end();
-        return "No existe el Usuario";
+            return "Usuario registrado";
+        } else
+            return "No existe el Usuario";
 
     } catch (error) {
         return error.message;
@@ -53,9 +52,5 @@ const editUser = async(id, nombre, email, password) => {
         return error.message;
     }
 }
-
-/* getUsers().then(res => console.log(res)); */
-/* let ms = deleteUser();
-ms.then(msg => console.log(msg)) */
 
 module.exports = { getUsers, insertUser, deleteUser, editUser }
