@@ -1,0 +1,97 @@
+{{> header }}
+
+<body id="page-top">
+    <div id="wrapper">
+        {{> sidebar}}
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {{> topbar}}
+                <div class="container-fluid">
+                    <div class="container">
+                        
+                    </div>
+                <!-- Page Heading -->
+                <h1 class="h3 mb-4 text-gray-800">Registrar Producto</h1>
+                    <form class="user text-center" action="registrarse.html">
+                        
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Código...">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Nombre del Producto...">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Proveedor...">
+                        </div>
+                        <hr> Detalles Generales <hr>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-6">
+                                <div class="form-group">
+                            <select class="form-control" style="border-radius: 10rem">
+                                <option selected>Material...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Peso en kg...">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Tamaño en cm...">
+                        </div>
+                            </div>
+                            <div class="col-sm-12 col-lg-6">
+                              <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Color...">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Talla (Opcional)...">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" style="border-radius: 10rem">
+                                <option selected>Origen...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="N° Stock...">
+                        </div>
+                          
+                            </div>
+                        </div>
+                        
+                        
+                        <hr>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12 col-lg-6">
+                                    <input type="number" class="form-control" placeholder="Precio Mercado...">
+                                    <br>
+                                </div>
+                                <br>
+                                <div class="col-sm-12 col-lg-6">
+                                    <input type="number" class="form-control" placeholder="Precio Proveedor...">
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                        
+                        <hr>
+                        <div class="form-group ">
+                            <input type="button" class="btn btn-primary btn-lg px-4" value="REGISTRAR">
+                        </div>
+
+                    </form>
+            </div>
+            </div>
+
+            
+        {{> footer}}   
+        </div>
+    </div>
+    
+
+    {{> modalSalir}}   
+{{> scripts}} 
+</body>
+
+
+</html>
