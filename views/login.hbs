@@ -18,25 +18,22 @@
                                 <div class="text-center">
                                     <img src="assets/img/logoT.png" alt="">
                                 </div>
-                                <form class="user" action="registrarse.html">
+                                <form class="user" action="/auth" method="post">
                                     <div class="form-group">
-                                        <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Correo Electrónico...">
+                                        <input type="email" class="form-control form-control-user" name="user" id="user" placeholder="Correo Electrónico..." required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Contraseña...">
+                                        <input type="password" class="form-control form-control-user" name="pass" id="pass" placeholder="Contraseña..." required>
                                     </div>
+                                    <hr>
+                                    <div class="form-group">
+                                       <input type="submit" class="btn btn-primary btn-user btn-block" value="Iniciar Sesión">
+                                    </div>
+                                    
 
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox small">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck">
-                                            <label class="custom-control-label text-white" for="customCheck">Remember
-                                                    Me</label>
-                                        </div>
-                                    </div>
-                                    <a class="btn btn-primary btn-user btn-block" href="/admin">
-                                            Iniciar Sesión
-                                        </a>
                                 </form>
+
+                                
                                 <hr>
                                 <div class="text-center text-white">
                                     <a class="text-white" href="forgot-password.html">Forgot Password?</a> .
@@ -60,15 +57,26 @@
         <footer class="page-footer font-small blue">
 
         <!-- Copyright -->
-        <div class="footer-copyright text-center py-3 text-white">© 2020 Copyright:
+        <div class="footer-copyright text-center py-3 text-white">© {{ getAnio }} Copyright:
             <a href="https://mdbootstrap.com/" class="text-white"> MDBootstrap.com</a>
         </div>
         <!-- Copyright -->
-
     </footer> 
     {{> modalLogin}}
 {{> scripts}} 
 </body>
-
-
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: '{{alertTitle}}',
+            text: '{{alertMessage}}',
+            icon: '{{icon}}',
+            showConfirmButton: '{{showConfirmButton}}',
+            timer: '{{timer}}'
+        }).then(()=>{
+            window.location = '/{{ruta}}'
+        })
+    </script>
+    {{/if}}
 </html>
