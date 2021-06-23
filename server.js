@@ -8,6 +8,8 @@ const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail } = requ
     // Helpers
 require('./hbs/helpers')
 
+const port = process.env.PORT || 3000;
+
 // Estaticas
 app.use(express.static(__dirname + '/public'));
 
@@ -185,6 +187,6 @@ app.get('/logout', (req, res) => {
     })
 })
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");
 });
