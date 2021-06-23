@@ -1,0 +1,94 @@
+{{> header }}
+
+<body id="page-top">
+    <div id="wrapper">
+        {{#ifEquals tipo "2"}} {{> sidebarEmpleado}} {{/ifEquals}} {{#ifEquals tipo "1"}} {{> sidebarAdmin}} {{/ifEquals}}
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {{> topbar}}
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-4 text-gray-800">Registro del Pedido</h1>
+                    <form action="" method="GET">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-user" placeholder="Cédula cliente...">
+
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <input type="submit" class="btn btn-primary btn-user" value="Buscar">
+                                <a class="btn btn-primary btn-user" href="/cliente">Nuevo Cliente</a>
+
+                            </div>
+
+
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-7">
+                            <form action="" class="text-center ml-3" method="GET">
+                                <div class="row">
+                                    <div class="col-9">
+                                        <div class="form-group">
+                                            <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
+                                                <option selected value="">Producto...</option>
+                                                <option value="2">Empleado</option>
+                                                <option value="3">Repartidor</option>
+                                             </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="number" class="form-control form-control-user" placeholder="Cantidad">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="submit" class="btn btn-primary btn-user" value="Añadir Producto">
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            </form>
+                            <div class="topbar-divider d-none d-sm-block"></div>
+                        </div>
+
+                        <div class="col-5">
+
+                            <div class="card border-left-info shadow h-100 py-2  mr-3">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Datos del cliente:
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <p>Nombre:</p>
+                                                    <p>edad</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            {{> footer}}
+        </div>
+    </div>
+    {{> modalSalir}} {{> scripts}}
+</body>
+
+</html>
