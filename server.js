@@ -3,7 +3,7 @@ const app = express();
 const hbs = require("hbs");
 const bcryptjs = require("bcryptjs")
 const session = require("express-session")
-const dotenv = require("dotenv");
+
 const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -19,9 +19,6 @@ app.set('view engine', 'hbs');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Dotenv
-//dotenv.config({ path: './env/.env' });
-
 // express session
 app.use(session({
     secret: 'secret',
@@ -31,21 +28,77 @@ app.use(session({
 }))
 
 // Rutas de la página web
+app.get('/', function(req, res) {
+    res.render('login', {
+        titulo: 'Login',
+    });
+});
 
 app.get('/admin', function(req, res) {
-    res.render('admin', {
-        titulo: 'Admin',
-    });
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        res.render('admin', {
+            login: true,
+            titulo: 'Dashboard',
+            tipo: 'admin',
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
 });
+app.get('/empleado', function(req, res) {
+    if (req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        res.render('empleado', {
+            login: true,
+            tipo: 'empleado',
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
 app.get('/cliente', function(req, res) {
-    res.render('cliente', {
-        titulo: 'Admin',
-    });
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        res.render('cliente', {
+            login: true,
+            titulo: 'Cliente',
+            tipo: user.tipo,
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
 });
 app.get('/producto', function(req, res) {
-    res.render('producto', {
-        titulo: 'Admin',
-    });
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        res.render('producto', {
+            login: true,
+            titulo: 'Producto',
+            tipo: user.tipo,
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+app.get('/pedido', function(req, res) {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        res.render('pedido', {
+            login: true,
+            titulo: 'Pedido',
+            tipo: user.tipo,
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
 });
 
 // Registrar Usuario
@@ -78,7 +131,7 @@ app.post('/register', async(req, res) => {
     }
 
 });
-
+// Autenticar Usuario
 app.post('/auth', async(req, res) => {
     const user = req.body.user;
     const pass = req.body.pass;
@@ -97,34 +150,35 @@ app.post('/auth', async(req, res) => {
 
             });
         } else {
-            req.session.loggedin = true;
-            req.session.name = authe[0].nombre;
+            let Ruta;
+            if (authe[0].id_tipo == "2") {
+                req.session.loggedinEmpleado = true;
+                Ruta = 'empleado';
+            } else if (authe[0].id_tipo == "3") {
+                req.session.loggedinRepartidor = true;
+                Ruta = 'repartidor';
+            } else if (authe[0].id_tipo == "1") {
+                req.session.loggedinAdmin = true;
+                Ruta = 'admin';
+            }
+            req.session.user = {
+                nombre: authe[0].nombre,
+                email: authe[0].email,
+                tipo: authe[0].id_tipo
+            }
             res.render('login', {
                 alert: true,
                 alertTitle: "Conexion Exitosa",
                 alertMessage: 'Login Correcto',
                 icon: 'success',
                 timer: 1500,
-                ruta: 'admin'
+                ruta: Ruta
             });
         }
     }
 })
 
-app.get('/', function(req, res) {
-    if (req.session.loggedin) {
-        res.render('admin', {
-            login: true,
-            name: req.session.name
-        });
-    } else {
-        res.render('login', {
-            login: false,
-
-        })
-    }
-});
-
+// Logout del usuario
 app.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/');
