@@ -18,7 +18,7 @@
                                 <div class="text-center">
                                     <img src="assets/img/logoT.png" alt="">
                                 </div>
-                                <form class="user" action="auth" method="post">
+                                <form class="user" action="/auth" method="post">
                                     <div class="form-group">
                                         <input type="email" class="form-control form-control-user" name="user" id="user" placeholder="Correo Electrónico..." required>
                                     </div>
@@ -57,15 +57,26 @@
         <footer class="page-footer font-small blue">
 
         <!-- Copyright -->
-        <div class="footer-copyright text-center py-3 text-white">© 2020 Copyright:
+        <div class="footer-copyright text-center py-3 text-white">© {{ getAnio }} Copyright:
             <a href="https://mdbootstrap.com/" class="text-white"> MDBootstrap.com</a>
         </div>
         <!-- Copyright -->
-
     </footer> 
     {{> modalLogin}}
 {{> scripts}} 
 </body>
-
-
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: '{{alertTitle}}',
+            text: '{{alertMessage}}',
+            icon: '{{icon}}',
+            showConfirmButton: '{{showConfirmButton}}',
+            timer: '{{timer}}'
+        }).then(()=>{
+            window.location = '/{{ruta}}'
+        })
+    </script>
+    {{/if}}
 </html>
