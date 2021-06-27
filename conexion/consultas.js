@@ -77,4 +77,17 @@ const authEmail = async(email) => {
         return error.message;
     }
 }
-module.exports = { getUsers, insertUser, deleteUser, editUser, authUser, authEmail }
+
+const getProvedores = async() => {
+    try {
+        const res = await pool.query('select * from proveedor');
+        pool.end();
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+module.exports = { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores }
