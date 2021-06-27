@@ -2,8 +2,7 @@ const { pool } = require("./conexion")
 
 const getUsers = async() => {
     try {
-        const res = await pool.query('select * from empleado');
-        pool.end();
+        const res = await pool.query('select id_empleado,nombre_tipo,nombre,email from empleado,tipo_empleado where empleado.id_tipo = tipo_empleado.id_tipo');
         return res.rows;
 
     } catch (error) {
@@ -28,10 +27,9 @@ const deleteUser = async(id) => {
         const consulta = `delete from empleado where id_empleado = ${id}`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
-            pool.end();
             return "Usuario Eliminado";
-        } else pool.end();
-        return "No existe el Usuario";
+        } else
+            return "No existe el Usuario";
 
 
     } catch (error) {

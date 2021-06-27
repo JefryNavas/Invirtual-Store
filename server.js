@@ -8,6 +8,9 @@ const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail } = requ
     // Helpers
 require('./hbs/helpers')
 
+//Puerto
+const port = process.env.PORT || 3000;
+
 // Estaticas
 app.use(express.static(__dirname + '/public'));
 
@@ -59,7 +62,6 @@ app.get('/empleado', function(req, res) {
         res.redirect('/')
     }
 });
-
 
 app.get('/cliente', function(req, res) {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
@@ -131,6 +133,7 @@ app.post('/register', async(req, res) => {
     }
 
 });
+
 // Autenticar Usuario
 app.post('/auth', async(req, res) => {
     const user = req.body.user;
@@ -185,6 +188,47 @@ app.get('/logout', (req, res) => {
     })
 })
 
-app.listen(3000, () => {
+// Tabla Usuarios 
+app.get('/tableUser', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+
+        let users = await getUsers();
+
+        res.render('tableUser', {
+            login: true,
+            titulo: 'Tables',
+            tipo: user.tipo,
+            name: user.nombre,
+            users
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+//Eliminar Usuario
+app.get('/deleteUser/:id', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const idUser = req.params.id;
+        let msg = await deleteUser(idUser);
+        res.render('tableUser', {
+            login: true,
+            titulo: 'Tables',
+            tipo: user.tipo,
+            name: user.nombre,
+            alert: true,
+            alertTitle: msg,
+            icon: 'success',
+            timer: 1500,
+            ruta: 'tableUser'
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");
 });
