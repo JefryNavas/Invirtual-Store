@@ -87,5 +87,19 @@ const getProvedores = async() => {
     }
 }
 
+const insertProv = async(nombre) => {
+    try {
+        const consulta = `insert into proveedor (nombre_prov) values ('${nombre}')`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Proveedor registrado";
+        } else
+            return "No se pudo registrar";
 
-module.exports = { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores }
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+module.exports = { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv }

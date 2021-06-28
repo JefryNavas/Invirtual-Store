@@ -46,6 +46,37 @@
                         </div>
                     </div>
 
+                     <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Tabla de Proveedores</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Código Proveedor</th>                    
+                                            <th class="text-center">Nombre</th>
+                                            <th class="text-center">Modificar</th>
+                                            <th class="text-center">Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each prov}}
+                                        <tr>
+                                            <th class="text-center">{{this.cod_prov}}</th>
+                                            <th class="text-center">{{this.nombre_prov}}</th>
+                                            <th class="text-center"><a href="/editUser/{{this.cod_prov}}" class="btn btn-primary btn-circle"><i class="fas fa-edit"></a></i></th>
+                                            <th class="text-center"><a href="/deleteUser/{{this.cod_prov}}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></th>
+                                        </tr>
+                                        {{/each}}
+                                                                              
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
 
             </div>
             </div>

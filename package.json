@@ -2,6 +2,9 @@
     "name": "web_server",
     "version": "1.0.0",
     "description": "",
+    "nodemonConfig": {
+        "ext": "js,hbs"
+    },
     "main": "app.js",
     "scripts": {
         "start": "node server.js",

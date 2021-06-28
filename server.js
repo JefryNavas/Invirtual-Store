@@ -4,7 +4,7 @@ const hbs = require("hbs");
 const bcryptjs = require("bcryptjs")
 const session = require("express-session")
 
-const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail } = require("./conexion/consultas")
+const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
 
@@ -76,19 +76,23 @@ app.get('/cliente', function(req, res) {
         res.redirect('/')
     }
 });
-app.get('/producto', function(req, res) {
+app.get('/producto', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
+        let proveedor = await getProvedores();
         res.render('producto', {
             login: true,
             titulo: 'Producto',
             tipo: user.tipo,
-            name: user.nombre
+            name: user.nombre,
+            prov: proveedor
         });
     } else {
         res.redirect('/')
     }
 });
+
+
 app.get('/pedido', function(req, res) {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
@@ -103,6 +107,22 @@ app.get('/pedido', function(req, res) {
     }
 });
 
+app.get('/proveedor', function(req, res) {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        res.render('proveedor', {
+            login: true,
+            titulo: 'Nuevo Proveedor',
+            tipo: user.tipo,
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+
 // Registrar Usuario
 app.post('/register', async(req, res) => {
     const user = {
@@ -116,10 +136,10 @@ app.post('/register', async(req, res) => {
     if (await authEmail(user.email)) {
         insertUser(user.rol, user.name, user.email, user.pass).then(resp => res.render('login', {
             alert: true,
-            alertTitle: 'Registro',
+            alertTitle: 'Registrado Correctamente',
             alertMessage: resp,
             icon: 'success',
-            timer: 1500,
+            timer: 1700,
             ruta: ''
         }));
     } else {
@@ -179,7 +199,7 @@ app.post('/auth', async(req, res) => {
             });
         }
     }
-})
+});
 
 // Logout del usuario
 app.get('/logout', (req, res) => {
@@ -194,13 +214,15 @@ app.get('/tableUser', async(req, res) => {
         let user = req.session.user;
 
         let users = await getUsers();
+        let prov = await getProvedores();
 
         res.render('tableUser', {
             login: true,
-            titulo: 'Tables',
+            titulo: 'Tablas',
             tipo: user.tipo,
             name: user.nombre,
-            users
+            users,
+            prov
         });
     } else {
         res.redirect('/')
@@ -227,6 +249,24 @@ app.get('/deleteUser/:id', async(req, res) => {
     } else {
         res.redirect('/')
     }
+});
+
+
+// Registrar Proveedor
+app.post('/regprov', async(req, res) => {
+    const prove = {
+        name: req.body.name,
+    };
+    // Insertar en la base de datos y mensaje
+    await insertProv(prove.name).then(resp => res.render('proveedor', {
+        alert: true,
+        alertTitle: 'Registrado Correctamente',
+        alertMessage: resp,
+        icon: 'success',
+        timer: 1500,
+        ruta: 'proveedor'
+    }));
+
 });
 
 app.listen(port, () => {
