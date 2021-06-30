@@ -2,7 +2,7 @@ const { pool } = require("./conexion")
 
 const getUsers = async() => {
     try {
-        const res = await pool.query('select id_empleado,nombre_tipo,nombre,email from empleado,tipo_empleado where empleado.id_tipo = tipo_empleado.id_tipo');
+        const res = await pool.query('select id_empleado,empleado.id_tipo,nombre_tipo,nombre,email,password from empleado,tipo_empleado where empleado.id_tipo = tipo_empleado.id_tipo');
         return res.rows;
 
     } catch (error) {
@@ -37,15 +37,14 @@ const deleteUser = async(id) => {
     }
 }
 
-const editUser = async(id, nombre, email, password) => {
+const editUser = async(id, nombre, rol, email, password) => {
     try {
-        const consulta = `update empleado set nombre = '${nombre}',email = '${email}', password = '${password}' where id_empleado = ${id}`
+        const consulta = `update empleado set nombre = '${nombre}',email = '${email}', password = '${password}',id_tipo = '${rol}' where id_empleado = ${id}`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
-            pool.end();
             return "Usuario Modificado Correctamente";
-        } else pool.end();
-        return "No existe el Usuario";
+        } else
+            return "No existe el Usuario";
     } catch (error) {
         return error.message;
     }
@@ -79,13 +78,13 @@ const authEmail = async(email) => {
 const getProvedores = async() => {
     try {
         const res = await pool.query('select * from proveedor');
-        pool.end();
         return res.rows;
 
     } catch (error) {
         return error.message;
     }
 }
+
 
 const insertProv = async(nombre) => {
     try {
@@ -100,6 +99,20 @@ const insertProv = async(nombre) => {
         return error.message;
     }
 }
+const deleteProv = async(id) => {
+    try {
+        const consulta = `delete from proveedor where cod_prov = ${id}`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Proveedor Eliminado";
+        } else
+            return "No existe el Proveedor";
 
 
-module.exports = { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv }
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+module.exports = { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv, deleteProv }

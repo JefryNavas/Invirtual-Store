@@ -4,7 +4,7 @@ const hbs = require("hbs");
 const bcryptjs = require("bcryptjs")
 const session = require("express-session")
 
-const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv } = require("./conexion/consultas")
+const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv, deleteProv } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
 
@@ -211,17 +211,71 @@ app.get('/logout', (req, res) => {
 // Tabla Usuarios 
 app.get('/tableUser', async(req, res) => {
     if (req.session.loggedinAdmin) {
+
         let user = req.session.user;
-
         let users = await getUsers();
-        let prov = await getProvedores();
-
         res.render('tableUser', {
             login: true,
             titulo: 'Tablas',
             tipo: user.tipo,
             name: user.nombre,
-            users,
+            users
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+// Editar Usuario
+app.post('/tableUser', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const idUser = req.body.id;
+        let users = await getUsers();
+        let usuario = users.find(obj => obj.id_empleado == idUser);
+        res.render('tableUser', {
+            login: true,
+            titulo: 'Tablas',
+            tipo: user.tipo,
+            name: user.nombre,
+            usuario
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+app.post('/editUser', async(req, res) => {
+    const user = {
+        id: req.body.id_empleado,
+        email: req.body.user,
+        name: req.body.name,
+        rol: req.body.rol,
+        pass: req.body.pass
+    };
+
+    const msg = await editUser(user.id, user.name, user.rol, user.email, user.pass);
+
+    res.render('tableUser', {
+        alert: true,
+        alertTitle: msg,
+        icon: 'success',
+        timer: 1700,
+        ruta: 'tableUser'
+    })
+
+})
+
+// Tabla Proveedor
+app.get('/tableProvee', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let prov = await getProvedores();
+
+        res.render('tableProvee', {
+            login: true,
+            titulo: 'Tablas',
+            tipo: user.tipo,
+            name: user.nombre,
             prov
         });
     } else {
@@ -250,7 +304,27 @@ app.get('/deleteUser/:id', async(req, res) => {
         res.redirect('/')
     }
 });
-
+//Eliminar Proveedor
+app.get('/deleteProv/:id', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const idprov = req.params.id;
+        let msg = await deleteProv(idprov);
+        res.render('tableProvee', {
+            login: true,
+            titulo: 'Tables',
+            tipo: user.tipo,
+            name: user.nombre,
+            alert: true,
+            alertTitle: msg,
+            icon: 'success',
+            timer: 1500,
+            ruta: 'tableProvee'
+        });
+    } else {
+        res.redirect('/')
+    }
+});
 
 // Registrar Proveedor
 app.post('/regprov', async(req, res) => {

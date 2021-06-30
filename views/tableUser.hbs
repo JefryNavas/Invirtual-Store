@@ -8,6 +8,35 @@
                 <div class="container-fluid">
                 <!-- Page Heading -->
                     <!-- DataTales Example -->
+                    {{#if usuario}}
+                        <h1 class="h3 mb-4 text-gray-800">Modificar</h1>
+
+                    <form class="user" action="/editUser" method="POST">
+                        <div class="form-group" style="display: none;">
+                            <input type="text" class="form-control form-control-user" name="id_empleado" value="{{usuario.id_empleado}}">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-user" name="name" placeholder="Nombre y Apellido..." value="{{usuario.nombre}}">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
+                                <option selected value="{{usuario.id_tipo}}">{{usuario.nombre_tipo}}</option>
+                                <option value="2">Empleado</option>
+                                <option value="3">Repartidor</option>
+                              </select>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="email" class="form-control form-control-user" name="user" placeholder="Correo Electrónico..." value="{{usuario.email}}">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control form-control-user" name="pass" placeholder="Contraseña..." value="{{usuario.password}}">
+                        </div>
+                        <hr>
+                         <input type="submit" class="btn btn-primary btn-user btn-block" value="Modificar Usuario">
+                    </form>
+                
+                {{else}}
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Tabla de Usuarios</h6>
@@ -33,7 +62,7 @@
                                             <th class="text-center">{{this.nombre_tipo}}</th>
                                             <th class="text-center">{{this.nombre}}</th>
                                             <th class="text-center">{{this.email}}</th>
-                                            <th class="text-center"><a href="/editUser/{{this.id_empleado}}" class="btn btn-primary btn-circle"><i class="fas fa-edit"></a></i></th>
+                                            <th class="text-center"><form action="/tableUser" method="post"><input type="text" name="id" value="{{this.id_empleado}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-edit"></i></button></form></th>
                                             <th class="text-center"><a href="/deleteUser/{{this.id_empleado}}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i>
                                     </a></th>
                                         </tr>
@@ -44,39 +73,9 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    </div>   
 
-                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Tabla de Proveedores</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">Código Proveedor</th>                    
-                                            <th class="text-center">Nombre</th>
-                                            <th class="text-center">Modificar</th>
-                                            <th class="text-center">Eliminar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{#each prov}}
-                                        <tr>
-                                            <th class="text-center">{{this.cod_prov}}</th>
-                                            <th class="text-center">{{this.nombre_prov}}</th>
-                                            <th class="text-center"><a href="/editUser/{{this.cod_prov}}" class="btn btn-primary btn-circle"><i class="fas fa-edit"></a></i></th>
-                                            <th class="text-center"><a href="/deleteUser/{{this.cod_prov}}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></th>
-                                        </tr>
-                                        {{/each}}
-                                                                              
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
+                    {{/if}}    
 
             </div>
             </div>
@@ -86,6 +85,7 @@
         </div>
     </div>
 
+    
     {{> modalSalir}}   
     
 {{> scripts}} 
