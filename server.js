@@ -4,7 +4,21 @@ const hbs = require("hbs");
 const bcryptjs = require("bcryptjs")
 const session = require("express-session")
 
-const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv, deleteProv } = require("./conexion/consultas")
+const {
+    getUsers,
+    insertUser,
+    deleteUser,
+    editUser,
+    authUser,
+    authEmail,
+    getProvedores,
+    insertProv,
+    deleteProv,
+    getGeneros,
+    insertCliente,
+    getClientes,
+    buscarPorCed
+} = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
 
@@ -63,14 +77,16 @@ app.get('/empleado', function(req, res) {
     }
 });
 
-app.get('/cliente', function(req, res) {
+app.get('/cliente', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
+        let genero = await getGeneros();
         res.render('cliente', {
             login: true,
             titulo: 'Cliente',
             tipo: user.tipo,
-            name: user.nombre
+            name: user.nombre,
+            genero
         });
     } else {
         res.redirect('/')
@@ -283,6 +299,24 @@ app.get('/tableProvee', async(req, res) => {
     }
 });
 
+// Tabla Clientes
+app.get('/tableClientes', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let client = await getClientes();
+
+        res.render('tableClientes', {
+            login: true,
+            titulo: 'Tablas',
+            tipo: user.tipo,
+            name: user.nombre,
+            client
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
 //Eliminar Usuario
 app.get('/deleteUser/:id', async(req, res) => {
     if (req.session.loggedinAdmin) {
@@ -342,6 +376,57 @@ app.post('/regprov', async(req, res) => {
     }));
 
 });
+
+// Registrar Cliente
+app.post('/regcli', async(req, res) => {
+    const cli = {
+        cedula: req.body.ced,
+        name: req.body.name,
+        email: req.body.email,
+        edad: req.body.edad,
+        gen: req.body.genero,
+        tel: req.body.tel,
+        medio: req.body.medio
+    };
+    // Insertar en la base de datos y mensaje
+    await insertCliente(cli.cedula, cli.name, cli.email, cli.edad, cli.gen, cli.tel, cli.medio).then(resp => res.render('cliente', {
+        alert: true,
+        alertTitle: 'Registrado Correctamente',
+        alertMessage: resp,
+        icon: 'success',
+        timer: 1500,
+        ruta: 'cliente'
+    }));
+
+});
+
+
+app.post('/buscarcli', async(req, res) => {
+
+    let cedula = req.body.cedula;
+    let cliente = await buscarPorCed(cedula);
+
+    if (cliente.nombre_cli != "") {
+        res.render('pedido', {
+            nombre: cliente.nombre_cli,
+            edad: cliente.edad,
+            tel: cliente.tlf,
+            medio: cliente.medio_compra,
+            ruta: 'pedido'
+        });
+    } else {
+        res.render('pedido', {
+            alert: true,
+            alertMessage: 'No existe el Usuario buscado',
+            icon: 'error',
+            timer: 1700,
+            ruta: 'pedido'
+        });
+
+    }
+
+});
+
 
 app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");

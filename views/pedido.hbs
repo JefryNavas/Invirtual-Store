@@ -10,16 +10,16 @@
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-4 text-gray-800">Registro del Pedido</h1>
-                    <form action="" method="GET">
+                    <form action="buscarcli" method="POST">
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" placeholder="Cédula cliente...">
+                                    <input type="text" class="form-control form-control-user" placeholder="Cédula cliente..." required maxlength="10" minlength="10" name="cedula">
 
                                 </div>
                             </div>
                             <div class="col-6">
-                                <input type="submit" class="btn btn-primary btn-user" value="Buscar">
+                                <input type="submit" class="btn btn-primary btn-user" value="Buscar Cliente">
                                 <a class="btn btn-primary btn-user" href="/cliente">Nuevo Cliente</a>
 
                             </div>
@@ -66,8 +66,10 @@
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
-                                                    <p>Nombre:</p>
-                                                    <p>edad</p>
+                                                    <p>Nombre:{{nombre}} </p>
+                                                    <p>Edad: {{edad}}</p>
+                                                    <p>Teléfono: {{tel}}</p>
+                                                    <p>Medio de Compra: {{medio}}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -90,5 +92,19 @@
     </div>
     {{> modalSalir}} {{> scripts}}
 </body>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: '{{alertTitle}}',
+            text: '{{alertMessage}}',
+            icon: '{{icon}}',
+            showConfirmButton: '{{showConfirmButton}}',
+            timer: '{{timer}}'
+        }).then(()=>{
+            window.location = '/{{ruta}}'
+        })
+    </script>
+    {{/if}}
 
 </html>
