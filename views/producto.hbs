@@ -2,105 +2,165 @@
 
 <body id="page-top">
     <div id="wrapper">
-        {{#ifEquals tipo "2"}}
-            {{> sidebarEmpleado}}
-        {{/ifEquals}}
-        {{#ifEquals tipo "1"}}
-            {{> sidebarAdmin}}
-        {{/ifEquals}}
+        {{#ifEquals tipo "2"}} {{> sidebarEmpleado}} {{/ifEquals}} {{#ifEquals tipo "1"}} {{> sidebarAdmin}} {{/ifEquals}}
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 {{> topbar}}
                 <div class="container-fluid">
                     <div class="container">
-                        
+
                     </div>
-                <!-- Page Heading -->
-                <h1 class="h3 mb-4 text-gray-800">Registrar Producto</h1>
-                    <form class="user text-center" action="registrarse.html">
-                        
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Código...">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Nombre del Producto...">
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control" style="border-radius: 10rem">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-4 text-gray-800">Registrar Producto</h1>
+                    <form class="user text-center" action="/producto" method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Código..." name="codigo">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Nombre del Producto..." name="nombre">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" style="border-radius: 10rem" name="proveedor">
                                 <option selected>Proveedor...</option>
                                 {{#each prov}}
                                 <option value={{this.cod_prov}}>{{this.nombre_prov}}</option>
                                 {{/each}}
                             </select>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="seleccionArchivos" accept="image/*" name="imagen" required >
+                                        <label class="custom-file-label" for="validatedCustomFile">Subir Imagen...</label>
+                                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                {{!-- Previsualizacion de la imagen --}}
+                                <div class="container">
+                                    <img id="imagenPrevisualizacion" width="70%">
+                                </div>
+                                    
+                            </div>
                         </div>
-                        <hr> Detalles Generales <hr>
+
+
+
+                        <hr> Detalles Generales
+                        <hr>
                         <div class="row">
                             <div class="col-sm-12 col-lg-6">
                                 <div class="form-group">
-                            <select class="form-control" style="border-radius: 10rem">
-                                <option selected>Material (Opcional)...</option>
+                                    <select class="form-control" style="border-radius: 10rem" name="categoria">
+                                <option selected>Categoria...</option>
+                                {{#each categoria}}
+                                <option value={{this.id_cat}}>{{this.categoria}}</option>
+                                {{/each}}
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <input type="number" class="form-control" placeholder="Peso en kg...">
-                        </div>
-                        <div class="form-group">
-                            <input type="number" class="form-control" placeholder="Tamaño en cm...">
-                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" style="border-radius: 10rem" name="material">
+                                <option selected value="">Material (Opcional)...</option>
+                            </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" class="form-control" placeholder="Peso en kg..." name="peso">
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" class="form-control" placeholder="Tamaño en cm..." name="cm">
+                                </div>
                             </div>
                             <div class="col-sm-12 col-lg-6">
-                              <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Color...">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Talla (Opcional)...">
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control" style="border-radius: 10rem">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Color..." name="color">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Talla (Opcional)..." name="talla" value="">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" style="border-radius: 10rem" name="origen">
                                 <option selected>Origen...</option>
                                 <option>Estados Unidos</option>
                                 <option>Ecuador</option>
                                 <option>China</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="N° Stock...">
-                        </div>
-                          
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="N° Stock..." name="stock">
+                                </div>
+
                             </div>
-                        </div>                     
+                        </div>
                         <hr>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-12 col-lg-6">
-                                    <input type="number" class="form-control" placeholder="Precio Mercado...">
+                                    <input type="number" class="form-control" placeholder="Precio Mercado..." name="precioMer">
                                     <br>
                                 </div>
                                 <br>
                                 <div class="col-sm-12 col-lg-6">
-                                    <input type="number" class="form-control" placeholder="Precio Proveedor...">
+                                    <input type="number" class="form-control" placeholder="Precio Proveedor..." name="precioProv">
                                 </div>
                             </div>
-                            
-                            
+
+
                         </div>
-                        
+
                         <hr>
                         <div class="form-group ">
-                            <input type="button" class="btn btn-primary btn-lg bg-gradient-primary" value="REGISTRAR">
+                            <input type="submit" class="btn btn-primary btn-lg bg-gradient-primary" value="REGISTRAR">
                         </div>
 
                     </form>
-            </div>
+                </div>
             </div>
 
-            
-        {{> footer}}   
+
+            {{> footer}}
         </div>
     </div>
-    {{> modalSalir}}   
-{{> scripts}} 
+    {{> modalSalir}} {{> scripts}}
 </body>
 
+<script>
+    // Obtener referencia al input y a la imagen
 
+const $seleccionArchivos = document.querySelector("#seleccionArchivos"),
+  $imagenPrevisualizacion = document.querySelector("#imagenPrevisualizacion");
+
+// Escuchar cuando cambie
+$seleccionArchivos.addEventListener("change", () => {
+  // Los archivos seleccionados, pueden ser muchos o uno
+  const archivos = $seleccionArchivos.files;
+  // Si no hay archivos salimos de la función y quitamos la imagen
+  if (!archivos || !archivos.length) {
+    $imagenPrevisualizacion.src = "";
+    return;
+  }
+  // Ahora tomamos el primer archivo, el cual vamos a previsualizar
+  const primerArchivo = archivos[0];
+  // Lo convertimos a un objeto de tipo objectURL
+  const objectURL = URL.createObjectURL(primerArchivo);
+  // Y a la fuente de la imagen le ponemos el objectURL
+  $imagenPrevisualizacion.src = objectURL;
+});
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: '{{alertTitle}}',
+            text: '{{alertMessage}}',
+            icon: '{{icon}}',
+            showConfirmButton: '{{showConfirmButton}}',
+            timer: '{{timer}}'
+        }).then(()=>{
+            window.location = '/{{ruta}}'
+        })
+    </script>
+    {{/if}}
 </html>

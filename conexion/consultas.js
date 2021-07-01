@@ -160,7 +160,30 @@ const buscarPorCed = async(cedula) => {
     }
 }
 
+const getCategorias = async() => {
+    try {
+        const res = await pool.query('select * from categoria_producto');
+        return res.rows;
 
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+const insertProduct = async(codigo, nombre, prov, cat, img, mate, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
+    try {
+        const consulta = `insert into producto values ('${codigo}','${nombre}','${cat}','${prov}','${mate}','${peso}','${color}','${stock}','${precioMer}','${precioProv}','${img}','${cm}','${talla}','${origen}')`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Producto registrado";
+        } else
+            return "No se pudo registrar el producto";
+
+    } catch (error) {
+        return error.message;
+    }
+}
 module.exports = {
     getUsers,
     insertUser,
@@ -174,5 +197,7 @@ module.exports = {
     getGeneros,
     insertCliente,
     getClientes,
-    buscarPorCed
+    buscarPorCed,
+    getCategorias,
+    insertProduct
 }
