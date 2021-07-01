@@ -191,6 +191,7 @@ app.post('/register', async(req, res) => {
 
 // Registrar Producto
 app.post('/producto', upload.single('imagen'), async(req, res) => {
+    let user = req.session.user;
     const producto = {
         codigo: req.body.codigo,
         nombre: req.body.nombre,
@@ -214,6 +215,7 @@ app.post('/producto', upload.single('imagen'), async(req, res) => {
         producto.talla, producto.origen, producto.stock, producto.precioMer, producto.precioProv);
 
     res.render('producto', {
+        tipo: user.tipo,
         alert: true,
         alertTitle: msg,
         icon: 'success',
@@ -316,6 +318,7 @@ app.post('/tableUser', async(req, res) => {
     }
 });
 app.post('/editUser', async(req, res) => {
+    let userr = req.session.user;
     const user = {
         id: req.body.id_empleado,
         email: req.body.user,
@@ -327,6 +330,7 @@ app.post('/editUser', async(req, res) => {
     const msg = await editUser(user.id, user.name, user.rol, user.email, user.pass);
 
     res.render('tableUser', {
+        tipo: userr.tipo,
         alert: true,
         alertTitle: msg,
         icon: 'success',
@@ -417,11 +421,13 @@ app.get('/deleteProv/:id', async(req, res) => {
 
 // Registrar Proveedor
 app.post('/regprov', async(req, res) => {
+    let user = req.session.user;
     const prove = {
         name: req.body.name,
     };
     // Insertar en la base de datos y mensaje
     await insertProv(prove.name).then(resp => res.render('proveedor', {
+        tipo: user.tipo,
         alert: true,
         alertTitle: 'Registrado Correctamente',
         alertMessage: resp,
@@ -434,6 +440,7 @@ app.post('/regprov', async(req, res) => {
 
 // Registrar Cliente
 app.post('/regcli', async(req, res) => {
+    let user = req.session.user;
     const cli = {
         cedula: req.body.ced,
         name: req.body.name,
@@ -445,6 +452,7 @@ app.post('/regcli', async(req, res) => {
     };
     // Insertar en la base de datos y mensaje
     await insertCliente(cli.cedula, cli.name, cli.email, cli.edad, cli.gen, cli.tel, cli.medio).then(resp => res.render('cliente', {
+        tipo: user.tipo,
         alert: true,
         alertTitle: 'Registrado Correctamente',
         alertMessage: resp,
@@ -455,30 +463,38 @@ app.post('/regcli', async(req, res) => {
 
 });
 
-
+// Buscar CLiente
 app.post('/buscarcli', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let cedula = req.body.cedula;
+        let cliente = await buscarPorCed(cedula);
+        if (cliente[0]) {
+            res.render('pedido', {
+                login: true,
+                titulo: 'Pedido',
+                tipo: user.tipo,
+                name: user.nombre,
+                nombre: cliente[0].nombre_cli,
+                edad: cliente[0].edad,
+                tel: cliente[0].tlf,
+                medio: cliente[0].medio_compra,
+            });
+        } else {
+            res.render('pedido', {
+                tipo: user.tipo,
+                alert: true,
+                alertMessage: 'No existe el Usuario buscado',
+                icon: 'error',
+                timer: 1700,
+                ruta: 'pedido'
+            });
 
-    let cedula = req.body.cedula;
-    let cliente = await buscarPorCed(cedula);
-
-    if (cliente.nombre_cli != "") {
-        res.render('pedido', {
-            nombre: cliente.nombre_cli,
-            edad: cliente.edad,
-            tel: cliente.tlf,
-            medio: cliente.medio_compra,
-            ruta: 'pedido'
-        });
-    } else {
-        res.render('pedido', {
-            alert: true,
-            alertMessage: 'No existe el Usuario buscado',
-            icon: 'error',
-            timer: 1700,
-            ruta: 'pedido'
-        });
-
+        }
     }
+
+
+
 
 });
 
