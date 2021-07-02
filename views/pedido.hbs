@@ -30,22 +30,29 @@
                     <hr>
                     <div class="row">
                         <div class="col-7">
-                            <form action="" class="text-center ml-3" method="GET">
+                            <form action="/addprod" class="text-center ml-3" method="POST">
                                 <div class="row">
                                     <div class="col-9">
                                         <div class="form-group">
-                                            <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
+                                            <select class="form-control" name="producto" id="rol" style="border-radius: 10rem" required>
                                                 <option selected value="">Producto...</option>
-                                                <option value="2">Empleado</option>
-                                                <option value="3">Repartidor</option>
+                                                {{#each prod}}
+                                                {{#if (ne this.stock 0)}}
+                                                {{#ifEquals this.id_cat "1"}}
+                                                <option value={{this.cod_prod}}>{{this.nombre_prod}}   -Talla:{{this.talla}}  -Color:{{this.color}} </option>
+                                                {{else}}
+                                                <option value={{this.cod_prod}}>{{this.nombre_prod}}</option>
+                                                {{/ifEquals}}
+                                                {{/if}}
+                                                {{/each}}
                                              </select>
                                         </div>
                                         <div class="form-group">
-                                            <input type="number" class="form-control form-control-user" placeholder="Cantidad">
+                                            <input type="number" class="form-control form-control-user" placeholder="Cantidad" name="cantidad" required min="1" max="10">
                                         </div>
 
                                         <div class="form-group">
-                                            <input type="submit" class="btn btn-primary btn-user" value="Añadir Producto">
+                                            <input type="submit" class="btn btn-primary btn-user" value="Añadir Producto al Pedido">
                                         </div>
 
                                     </div>
@@ -54,6 +61,38 @@
                                 </div>
                             </form>
                             <div class="topbar-divider d-none d-sm-block"></div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Resumen del Pedido</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Codigo Producto</th>                    
+                                            <th class="text-center">Nombre Producto</th>
+                                            <th class="text-center">Cantidad</th>
+                                            <th class="text-center">Total Producto</th>
+                                            <th class="text-center">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-center"> {{codigo}} </th>
+                                            <th class="text-center">{{nombre_prod}} </th>
+                                            <th class="text-center">{{cant}}</th>
+                                            <th class="text-center">{{total}}</th>
+                                            <th class="text-center">{{subtotal}}</th>
+                                        </tr>                                   
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div> 
+
+
+
                         </div>
 
                         <div class="col-5">
@@ -66,7 +105,8 @@
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
-                                                    <p>Nombre:{{nombre}} </p>
+                                                    <p>Cédula: {{ci}} </p>
+                                                    <p>Nombre: {{nombre}} </p>
                                                     <p>Edad: {{edad}}</p>
                                                     <p>Teléfono: {{tel}}</p>
                                                     <p>Medio de Compra: {{medio}}</p>

@@ -171,9 +171,9 @@ const getCategorias = async() => {
 }
 
 
-const insertProduct = async(codigo, nombre, prov, cat, img, mate, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
+const insertProduct = async(nombre, prov, cat, img, mate, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
     try {
-        const consulta = `insert into producto values ('${codigo}','${nombre}','${cat}','${prov}','${mate}','${peso}','${color}','${stock}','${precioMer}','${precioProv}','${img}','${cm}','${talla}','${origen}')`
+        const consulta = `insert into producto (nombre_prod,id_cat,cod_prov,material,color,stock,precio_mercado,precio_proveedor,foto,cm,talla,origen,peso) values ('${nombre}','${cat}','${prov}','${mate}','${color}','${stock}','${precioMer}','${precioProv}','${img}','${cm}','${talla}','${origen}','${peso}')`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
             return "Producto registrado";
@@ -184,6 +184,29 @@ const insertProduct = async(codigo, nombre, prov, cat, img, mate, peso, cm, colo
         return error.message;
     }
 }
+
+const getProductos = async() => {
+    try {
+        const res = await pool.query('select * from producto');
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+const productoPorId = async(id_prod) => {
+    try {
+        const res = await pool.query(`select * from producto where cod_prod = '${id_prod}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
 module.exports = {
     getUsers,
     insertUser,
@@ -199,5 +222,7 @@ module.exports = {
     getClientes,
     buscarPorCed,
     getCategorias,
-    insertProduct
+    insertProduct,
+    getProductos,
+    productoPorId
 }

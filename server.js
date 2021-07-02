@@ -22,7 +22,9 @@ const {
     getClientes,
     buscarPorCed,
     getCategorias,
-    insertProduct
+    insertProduct,
+    getProductos,
+    productoPorId
 } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -94,6 +96,21 @@ app.get('/empleado', function(req, res) {
     }
 });
 
+app.get('/repartidor', function(req, res) {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        res.render('repartidor', {
+            login: true,
+            tipo: 'repartidor',
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+
 app.get('/cliente', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
@@ -128,14 +145,16 @@ app.get('/producto', async(req, res) => {
 });
 
 
-app.get('/pedido', function(req, res) {
+app.get('/pedido', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
+        let prod = await getProductos();
         res.render('pedido', {
             login: true,
             titulo: 'Pedido',
             tipo: user.tipo,
-            name: user.nombre
+            name: user.nombre,
+            prod
         });
     } else {
         res.redirect('/')
@@ -164,28 +183,43 @@ app.post('/register', async(req, res) => {
         email: req.body.user,
         name: req.body.name,
         rol: req.body.rol,
-        pass: req.body.pass
+        pass: req.body.pass,
+        pass2: req.body.pass2
     };
     // Insertar en la base de datos y mensaje
     //let passhash = await bcryptjs.hash(user.pass, 8);
-    if (await authEmail(user.email)) {
-        insertUser(user.rol, user.name, user.email, user.pass).then(resp => res.render('login', {
-            alert: true,
-            alertTitle: 'Registrado Correctamente',
-            alertMessage: resp,
-            icon: 'success',
-            timer: 1700,
-            ruta: ''
-        }));
+    if (user.pass2 == user.pass) {
+        if (await authEmail(user.email)) {
+            insertUser(user.rol, user.name, user.email, user.pass).then(resp => res.render('login', {
+                alert: true,
+                alertTitle: 'Registrado Correctamente',
+                alertMessage: resp,
+                icon: 'success',
+                timer: 1700,
+                ruta: ''
+            }));
+        } else {
+            res.render('login', {
+                alert: true,
+                alertMessage: 'El email ya existe',
+                icon: 'error',
+                timer: 1500,
+                ruta: ''
+            });
+        }
+
     } else {
         res.render('login', {
             alert: true,
-            alertMessage: 'El email ya existe',
+            alertMessage: 'Las Contraseñas no coinciden',
             icon: 'error',
             timer: 1500,
             ruta: ''
         });
+
     }
+
+
 
 });
 
@@ -193,7 +227,7 @@ app.post('/register', async(req, res) => {
 app.post('/producto', upload.single('imagen'), async(req, res) => {
     let user = req.session.user;
     const producto = {
-        codigo: req.body.codigo,
+        //codigo: req.body.codigo,
         nombre: req.body.nombre,
         proveedor: req.body.proveedor,
         categoria: req.body.categoria,
@@ -210,7 +244,7 @@ app.post('/producto', upload.single('imagen'), async(req, res) => {
     };
     const tempPath = req.file.path;
     const targetPath = path.join(__dirname, tempPath);
-    let msg = await insertProduct(producto.codigo, producto.nombre, producto.proveedor, producto.categoria,
+    let msg = await insertProduct(producto.nombre, producto.proveedor, producto.categoria,
         targetPath, producto.material, producto.peso, producto.cm, producto.color,
         producto.talla, producto.origen, producto.stock, producto.precioMer, producto.precioProv);
 
@@ -376,6 +410,26 @@ app.get('/tableClientes', async(req, res) => {
     }
 });
 
+
+// Tabla Productos
+app.get('/tableProductos', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let product = await getProductos();
+
+        res.render('tableProductos', {
+            login: true,
+            titulo: 'Tablas',
+            tipo: user.tipo,
+            name: user.nombre,
+            product
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
 //Eliminar Usuario
 app.get('/deleteUser/:id', async(req, res) => {
     if (req.session.loggedinAdmin) {
@@ -469,16 +523,19 @@ app.post('/buscarcli', async(req, res) => {
         let user = req.session.user;
         let cedula = req.body.cedula;
         let cliente = await buscarPorCed(cedula);
+        let prod = await getProductos();
         if (cliente[0]) {
             res.render('pedido', {
                 login: true,
                 titulo: 'Pedido',
                 tipo: user.tipo,
+                ci: cliente[0].cedula_cli,
                 name: user.nombre,
                 nombre: cliente[0].nombre_cli,
                 edad: cliente[0].edad,
                 tel: cliente[0].tlf,
                 medio: cliente[0].medio_compra,
+                prod
             });
         } else {
             res.render('pedido', {
@@ -493,10 +550,45 @@ app.post('/buscarcli', async(req, res) => {
         }
     }
 
+});
 
 
+app.post('/addprod', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let idprod = req.body.producto;
+        let producto = await productoPorId(idprod);
+        let cant = req.body.cantidad;
+        let total = cant * producto[0].precio_mercado
+        let prod = await getProductos();
+        if (cant <= producto[0].stock) {
+            res.render('pedido', {
+                login: true,
+                titulo: 'Pedido',
+                tipo: user.tipo,
+                codigo: idprod,
+                name: user.nombre,
+                nombre_prod: producto[0].nombre_prod,
+                cant,
+                total,
+                subtotal: total,
+                prod
+            });
+        } else {
+            res.render('pedido', {
+                tipo: user.tipo,
+                alert: true,
+                alertMessage: 'No existe stock suficiente para el producto requerido',
+                icon: 'error',
+                timer: 1700,
+                ruta: 'pedido'
+            });
+
+        }
+    }
 
 });
+
 
 
 app.listen(port, () => {
