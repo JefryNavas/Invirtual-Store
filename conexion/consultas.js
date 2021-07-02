@@ -195,6 +195,16 @@ const getProductos = async() => {
     }
 }
 
+const getProductosTabla = async() => {
+    try {
+        const res = await pool.query('select p.cod_prod, p.nombre_prod, cat.categoria, pr.nombre_prov,p.color, p.stock, p.precio_mercado, p.precio_proveedor from producto as p, categoria_producto as cat, proveedor as pr where p.id_cat = cat.id_cat and pr.cod_prov = p.cod_prov');
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 const productoPorId = async(id_prod) => {
     try {
@@ -224,5 +234,6 @@ module.exports = {
     getCategorias,
     insertProduct,
     getProductos,
-    productoPorId
+    productoPorId,
+    getProductosTabla
 }

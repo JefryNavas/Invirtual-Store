@@ -24,7 +24,8 @@ const {
     getCategorias,
     insertProduct,
     getProductos,
-    productoPorId
+    productoPorId,
+    getProductosTabla
 } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -415,7 +416,7 @@ app.get('/tableClientes', async(req, res) => {
 app.get('/tableProductos', async(req, res) => {
     if (req.session.loggedinAdmin) {
         let user = req.session.user;
-        let product = await getProductos();
+        let product = await getProductosTabla();
 
         res.render('tableProductos', {
             login: true,
