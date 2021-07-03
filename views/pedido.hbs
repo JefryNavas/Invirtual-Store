@@ -13,23 +13,49 @@
                     <form action="/buscarcli" method="POST">
                         <div class="row">
                             <div class="col-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" placeholder="Cédula cliente..." required maxlength="10" minlength="10" name="cedula">
-
+                                <div class="input-group">
+                                    <div class="form-outline">
+                                        <input type="search" class="form-control" required maxlength="10" minlength="10" name="cedula" placeholder="Cédula Cliente..." />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-search"></i>
+                                        </button>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <input type="submit" class="btn btn-primary btn-user" value="Buscar Cliente">
-                                <a class="btn btn-primary btn-user" href="/cliente">Nuevo Cliente</a>
-
-                            </div>
-
-
                         </div>
                     </form>
                     <hr>
+                    {{#if cliente}}
                     <div class="row">
+                        <div class="col-5">
+
+                            <div class="card border-left-info shadow h-100 py-2  mr-3">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Datos del cliente:
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <p>Cédula: {{cliente.cedula_cli}} </p>
+                                                    <p>Nombre: {{cliente.nombre_cli}} </p>
+                                                    <p>Edad: {{cliente.edad}}</p>
+                                                    <p>Teléfono: {{cliente.tlf}}</p>
+                                                    <p>Medio de Compra: {{cliente.medio_compra}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
                         <div class="col-7">
+
                             <form action="/addprod" class="text-center ml-3" method="POST">
                                 <div class="row">
                                     <div class="col-9">
@@ -61,68 +87,47 @@
                                 </div>
                             </form>
                             <div class="topbar-divider d-none d-sm-block"></div>
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Resumen del Pedido</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">Codigo Producto</th>                    
-                                            <th class="text-center">Nombre Producto</th>
-                                            <th class="text-center">Cantidad</th>
-                                            <th class="text-center">Total Producto</th>
-                                            <th class="text-center">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th class="text-center"> {{codigo}} </th>
-                                            <th class="text-center">{{nombre_prod}} </th>
-                                            <th class="text-center">{{cant}}</th>
-                                            <th class="text-center">{{total}}</th>
-                                            <th class="text-center">{{subtotal}}</th>
-                                        </tr>                                   
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div> 
-
-
-
-                        </div>
-
-                        <div class="col-5">
-
-                            <div class="card border-left-info shadow h-100 py-2  mr-3">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Resumen del Pedido</h6>
+                                </div>
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Datos del cliente:
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <p>Cédula: {{ci}} </p>
-                                                    <p>Nombre: {{nombre}} </p>
-                                                    <p>Edad: {{edad}}</p>
-                                                    <p>Teléfono: {{tel}}</p>
-                                                    <p>Medio de Compra: {{medio}}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Codigo Producto</th>
+                                                    <th class="text-center">Nombre Producto</th>
+                                                    <th class="text-center">Cantidad</th>
+                                                    <th class="text-center">Total Producto</th>
+                                                    <th class="text-center">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#each productos}}
+                                                <tr>
+                                                    <th class="text-center">{{this.codidoProd}}</th>
+                                                    <th class="text-center">{{this.nombreProd}}</th>
+                                                    <th class="text-center">{{this.cant}}</th>
+                                                    <th class="text-center">{{this.total}}</th>
+                                                    <th class="text-center">{{this.subtotal}}</th>
+
+                                                </tr>
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
 
 
+
                         </div>
                     </div>
+                    {{/if}}
+
+                    
+                    
                 </div>
             </div>
 
@@ -130,21 +135,32 @@
             {{> footer}}
         </div>
     </div>
-    {{> modalSalir}} {{> scripts}}
+    {{> modalSalir}}
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="assets/js/sb-admin-2.min.js"></script>
+
+
 </body>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{#if alert}}
-        <script>
-        Swal.fire({
-            title: '{{alertTitle}}',
-            text: '{{alertMessage}}',
-            icon: '{{icon}}',
-            showConfirmButton: '{{showConfirmButton}}',
-            timer: '{{timer}}'
-        }).then(()=>{
-            window.location = '/{{ruta}}'
-        })
-    </script>
-    {{/if}}
+{{#if alert}}
+<script>
+    Swal.fire({
+        title: '{{alertTitle}}',
+        text: '{{alertMessage}}',
+        icon: '{{icon}}',
+        showConfirmButton: '{{showConfirmButton}}',
+        timer: '{{timer}}'
+    }).then(() => {
+        window.location = '/{{ruta}}'
+    })
+</script>
+{{/if}}
 
 </html>

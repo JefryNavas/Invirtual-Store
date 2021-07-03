@@ -155,7 +155,9 @@ app.get('/pedido', async(req, res) => {
             titulo: 'Pedido',
             tipo: user.tipo,
             name: user.nombre,
-            prod
+            prod,
+            productos: req.session.productos,
+            cliente: req.session.cliente
         });
     } else {
         res.redirect('/')
@@ -297,6 +299,8 @@ app.post('/auth', async(req, res) => {
                 email: authe[0].email,
                 tipo: authe[0].id_tipo
             }
+            req.session.productos = [];
+            req.session.cliente;
             res.render('login', {
                 alert: true,
                 alertTitle: "Conexion Exitosa",
@@ -526,16 +530,13 @@ app.post('/buscarcli', async(req, res) => {
         let cliente = await buscarPorCed(cedula);
         let prod = await getProductos();
         if (cliente[0]) {
+            req.session.cliente = cliente[0];
             res.render('pedido', {
                 login: true,
                 titulo: 'Pedido',
                 tipo: user.tipo,
-                ci: cliente[0].cedula_cli,
                 name: user.nombre,
-                nombre: cliente[0].nombre_cli,
-                edad: cliente[0].edad,
-                tel: cliente[0].tlf,
-                medio: cliente[0].medio_compra,
+                cliente: req.session.cliente,
                 prod
             });
         } else {
@@ -558,21 +559,32 @@ app.post('/addprod', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
         let idprod = req.body.producto;
-        let producto = await productoPorId(idprod);
         let cant = req.body.cantidad;
+        let producto = await productoPorId(idprod);
         let total = cant * producto[0].precio_mercado
         let prod = await getProductos();
+
+
         if (cant <= producto[0].stock) {
+
+            product = {
+                id_cliente: req.session.cliente.cedula_cli,
+                codidoProd: producto[0].cod_prod,
+                nombreProd: producto[0].nombre_prod,
+                cant,
+                total,
+                subtotal: total,
+                estado: "No entregado",
+                fechaEntrega: "2000 - 01 - 01",
+            }
+            req.session.productos.push(product);
             res.render('pedido', {
                 login: true,
                 titulo: 'Pedido',
                 tipo: user.tipo,
-                codigo: idprod,
                 name: user.nombre,
-                nombre_prod: producto[0].nombre_prod,
-                cant,
-                total,
-                subtotal: total,
+                productos: req.session.productos,
+                cliente: req.session.cliente,
                 prod
             });
         } else {
