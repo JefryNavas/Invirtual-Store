@@ -157,7 +157,8 @@ app.get('/pedido', async(req, res) => {
             name: user.nombre,
             prod,
             productos: req.session.productos,
-            cliente: req.session.cliente
+            cliente: req.session.cliente,
+            nuevoP: req.session.nuevoPro
         });
     } else {
         res.redirect('/')
@@ -301,6 +302,8 @@ app.post('/auth', async(req, res) => {
             }
             req.session.productos = [];
             req.session.cliente;
+            req.session.cod_pedido = Date.now();
+            req.session.nuevoPro;
             res.render('login', {
                 alert: true,
                 alertTitle: "Conexion Exitosa",
@@ -537,16 +540,20 @@ app.post('/buscarcli', async(req, res) => {
                 tipo: user.tipo,
                 name: user.nombre,
                 cliente: req.session.cliente,
-                prod
+                prod,
+                nuevoP: req.session.nuevoPro,
             });
         } else {
+            req.session.nuevoPro = false;
             res.render('pedido', {
                 tipo: user.tipo,
                 alert: true,
                 alertMessage: 'No existe el Usuario buscado',
                 icon: 'error',
                 timer: 1700,
-                ruta: 'pedido'
+                ruta: 'pedido',
+                nuevoP: req.session.nuevoPro,
+
             });
 
         }
@@ -568,6 +575,7 @@ app.post('/addprod', async(req, res) => {
         if (cant <= producto[0].stock) {
 
             product = {
+                cod_pedido: `pedido-${req.session.cod_pedido}`,
                 id_cliente: req.session.cliente.cedula_cli,
                 codidoProd: producto[0].cod_prod,
                 nombreProd: producto[0].nombre_prod,
@@ -578,6 +586,7 @@ app.post('/addprod', async(req, res) => {
                 fechaEntrega: "2000 - 01 - 01",
             }
             req.session.productos.push(product);
+            console.log(req.session.productos);
             res.render('pedido', {
                 login: true,
                 titulo: 'Pedido',
@@ -585,23 +594,51 @@ app.post('/addprod', async(req, res) => {
                 name: user.nombre,
                 productos: req.session.productos,
                 cliente: req.session.cliente,
-                prod
+                prod,
+                nuevoP: req.session.nuevoPro,
             });
         } else {
+            req.session.nuevoPro = true;
             res.render('pedido', {
                 tipo: user.tipo,
                 alert: true,
                 alertMessage: 'No existe stock suficiente para el producto requerido',
                 icon: 'error',
                 timer: 1700,
-                ruta: 'pedido'
+                ruta: 'pedido',
+                nuevoP: req.session.nuevoPro,
             });
 
         }
     }
 
 });
+app.post('/nuevoPedido', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let nuevo = req.body.nuevo;
+        req.session.productos = [];
+        req.session.cliente;
+        req.session.cod_pedido = Date.now();
+        req.session.nuevoPro = true;
+        if (nuevo == "nuevo") {
+            res.render('pedido', {
+                login: true,
+                titulo: 'Pedido',
+                tipo: user.tipo,
+                name: user.nombre,
+                nuevoP: req.session.nuevoPro,
+                productos: req.session.productos,
+                cliente: null
 
+                /*             productos: req.session.productos,
+                            cliente: req.session.cliente,
+                            prod */
+            });
+        }
+
+    }
+})
 
 
 app.listen(port, () => {

@@ -9,11 +9,10 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
+                    <h1 class="h3 mb-4 text-gray-800">Registro del Pedido</h1>
                     <form action="/nuevoPedido" method="post">
-                    <h1 class="h3 mb-4 text-gray-800">Registro del Pedido <button type="submit" class="btn btn-primary">Nuevo Pedido</button></h1>
-                    
                         <input type="text" name="nuevo" value="nuevo" style="display: none;">
-                        
+                        <button type="submit" class="btn btn-primary">Nuevo Producto</button>
                     </form>
                     {{#if nuevoP}}
                     <form action="/buscarcli" method="POST">
@@ -96,7 +95,7 @@
                                 <div class="card-header py-3">
                                     <h6 class="m-0 font-weight-bold text-primary">Resumen del Pedido</h6>
                                 </div>
-                                <div class="card-body text-center">
+                                <div class="card-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
@@ -122,10 +121,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    {{#if productos}}
-                                        <button type="submit" class="btn btn-primary">Hacer Pedido</button>
-                                    {{/if}}
-                                    
                                 </div>
                             </div>
 
