@@ -216,6 +216,24 @@ const productoPorId = async(id_prod) => {
     }
 }
 
+const hacerPedido = async(pedidos) => {
+    let res;
+    try {
+        for (const i in pedidos) {
+            const consulta = `insert into pedido(cantidad,total,estado,cod_prod,cedula_cli,cod_ped,fecha_entrega) values (${pedidos[i].cant},${pedidos[i].total},'${pedidos[i].estado}',${pedidos[i].codigoProd},'${pedidos[i].id_cliente}','${pedidos[i].cod_pedido}','${pedidos[i].fechaEntrega}')`;
+            res = await pool.query(consulta);
+        }
+
+        if (res.rowCount == 1) {
+            return "Pedido registrado";
+        } else
+            return "No se pudo registrar el pedido";
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     getUsers,
@@ -235,5 +253,6 @@ module.exports = {
     insertProduct,
     getProductos,
     productoPorId,
-    getProductosTabla
+    getProductosTabla,
+    hacerPedido
 }

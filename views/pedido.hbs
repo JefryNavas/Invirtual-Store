@@ -1,5 +1,21 @@
 {{> header }}
+<style>
 
+.box {
+      
+  padding: 6px;
+  border: none;
+  font-size: 15px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  -webkit-appearance: button;
+  appearance: button;
+  outline: none;
+}
+
+
+
+
+</style>
 <body id="page-top">
     <div id="wrapper">
         {{#ifEquals tipo "2"}} {{> sidebarEmpleado}} {{/ifEquals}} {{#ifEquals tipo "1"}} {{> sidebarAdmin}} {{/ifEquals}}
@@ -34,7 +50,7 @@
                     <div class="row">
                         <div class="col-5">
 
-                            <div class="card border-left-info shadow h-100 py-2  mr-3">
+                            <div class="card border-left-info shadow h-100">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
@@ -61,11 +77,10 @@
 
                         <div class="col-7">
 
-                            <form action="/addprod" class="text-center ml-3" method="POST">
+                            <form action="/addprod" class="text-center" method="POST">
                                 <div class="row">
-                                    <div class="col-9">
-                                        <div class="form-group">
-                                            <select class="form-control" name="producto" id="rol" style="border-radius: 10rem" required>
+                                    <div class="col-12 py-3">
+                                            <select class="box" name="producto" id="rol" required>
                                                 <option selected value="">Producto...</option>
                                                 {{#each prod}}
                                                 {{#if (ne this.stock 0)}}
@@ -77,15 +92,11 @@
                                                 {{/if}}
                                                 {{/each}}
                                              </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="number" class="form-control form-control-user" placeholder="Cantidad" name="cantidad" required min="1" max="10">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <input type="submit" class="btn btn-primary btn-user" value="Añadir Producto al Pedido">
-                                        </div>
-
+                                            
+                                             <input type="number" class="box" placeholder="Cantidad" name="cantidad" required min="1" max="10">
+                                             <button type="submit" class="btn-primary"><i class="fas fa-plus"> Añadir</i></button>
+                                            
+                                            
                                     </div>
 
 
@@ -101,7 +112,6 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center">Codigo Producto</th>
                                                     <th class="text-center">Nombre Producto</th>
                                                     <th class="text-center">Cantidad</th>
                                                     <th class="text-center">Total Producto</th>
@@ -111,7 +121,6 @@
                                             <tbody>
                                                 {{#each productos}}
                                                 <tr>
-                                                    <th class="text-center">{{this.codidoProd}}</th>
                                                     <th class="text-center">{{this.nombreProd}}</th>
                                                     <th class="text-center">{{this.cant}}</th>
                                                     <th class="text-center">{{this.total}}</th>
@@ -123,7 +132,10 @@
                                         </table>
                                     </div>
                                     {{#if productos}}
+                                    <form action="/hacerPedido" method="post">
                                         <button type="submit" class="btn btn-primary">Hacer Pedido</button>
+                                    </form>
+                                        
                                     {{/if}}
                                     
                                 </div>

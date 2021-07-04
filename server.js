@@ -25,7 +25,8 @@ const {
     insertProduct,
     getProductos,
     productoPorId,
-    getProductosTabla
+    getProductosTabla,
+    hacerPedido
 } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -302,7 +303,7 @@ app.post('/auth', async(req, res) => {
             }
             req.session.productos = [];
             req.session.cliente;
-            req.session.cod_pedido = Date.now();
+            req.session.cod_pedido;
             req.session.nuevoPro;
             res.render('login', {
                 alert: true,
@@ -577,16 +578,15 @@ app.post('/addprod', async(req, res) => {
             product = {
                 cod_pedido: `pedido-${req.session.cod_pedido}`,
                 id_cliente: req.session.cliente.cedula_cli,
-                codidoProd: producto[0].cod_prod,
+                codigoProd: producto[0].cod_prod,
                 nombreProd: producto[0].nombre_prod,
-                cant,
+                cant: parseInt(cant, 10),
                 total,
                 subtotal: total,
                 estado: "No entregado",
-                fechaEntrega: "2000 - 01 - 01",
+                fechaEntrega: "2000-01-01"
             }
             req.session.productos.push(product);
-            console.log(req.session.productos);
             res.render('pedido', {
                 login: true,
                 titulo: 'Pedido',
@@ -630,15 +630,33 @@ app.post('/nuevoPedido', async(req, res) => {
                 nuevoP: req.session.nuevoPro,
                 productos: req.session.productos,
                 cliente: null
-
-                /*             productos: req.session.productos,
-                            cliente: req.session.cliente,
-                            prod */
             });
         }
 
     }
-})
+});
+app.post('/hacerPedido', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let msg = await hacerPedido(req.session.productos);
+        req.session.nuevoPro = false;
+        res.render('pedido', {
+            login: true,
+            titulo: 'Pedido',
+            name: user.nombre,
+            tipo: user.tipo,
+            alert: true,
+            alertMessage: msg,
+            icon: 'success',
+            timer: 1700,
+            ruta: 'pedido',
+            nuevoP: req.session.nuevoPro
+
+        });
+
+
+    }
+});
 
 
 app.listen(port, () => {
