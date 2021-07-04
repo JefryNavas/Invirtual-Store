@@ -1,0 +1,78 @@
+{{> header }}
+<body id="page-top">
+    <div id="wrapper">
+        {{> sidebarAdmin}}
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {{> topbar}}
+                <div class="container-fluid">
+                <!-- Page Heading -->
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Tabla de Productos</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Nombre</th>                    
+                                            <th class="text-center">Categoría</th>
+                                            <th class="text-center">Proveedor</th>
+                                            <th class="text-center">Color</th>
+                                            <th class="text-center"># en Stock</th>
+                                            <th class="text-center">Precio Venta</th>
+                                            <th class="text-center">Precio Proveedor</th>
+                                            <th class="text-center">Modificar</th>
+                                            <th class="text-center">Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each product}}
+                                        <tr>
+                                            <th class="text-center">{{this.nombre_prod}}</th>
+                                            <th class="text-center">{{this.categoria}}</th>
+                                            <th class="text-center">{{this.nombre_prov}}</th>
+                                            <th class="text-center">{{this.color}}</th>
+                                            <th class="text-center">{{this.stock}}</th>
+                                            <th class="text-center">{{this.precio_mercado}}</th>
+                                            <th class="text-center">{{this.precio_proveedor}}</th>
+                                            <th class="text-center"><a href="/editProd/{{this.cod_prod}}" class="btn btn-primary btn-circle"><i class="fas fa-edit"></a></i></th>
+                                            <th class="text-center"><a href="/deleteProd/{{this.cod_prod}}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></th>
+                                        </tr>
+                                        {{/each}}
+                                                                              
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>          
+            </div>
+            </div>
+
+            
+        {{> footer}}   
+        </div>
+    </div>
+
+    {{> modalSalir}}   
+    
+{{> scripts}} 
+
+</body>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: '{{alertTitle}}',
+            text: '{{alertMessage}}',
+            icon: '{{icon}}',
+            showConfirmButton: '{{showConfirmButton}}',
+            timer: '{{timer}}'
+        }).then(()=>{
+            window.location = '/{{ruta}}'
+        })
+    </script>
+    {{/if}}
+</html>

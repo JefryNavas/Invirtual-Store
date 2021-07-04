@@ -3,10 +3,45 @@ const app = express();
 const hbs = require("hbs");
 const bcryptjs = require("bcryptjs")
 const session = require("express-session")
-
-const { getUsers, insertUser, deleteUser, editUser, authUser, authEmail, getProvedores, insertProv, deleteProv } = require("./conexion/consultas")
+const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
+const mimeTypes = require("mime-types");
+const {
+    getUsers,
+    insertUser,
+    deleteUser,
+    editUser,
+    authUser,
+    authEmail,
+    getProvedores,
+    insertProv,
+    deleteProv,
+    getGeneros,
+    insertCliente,
+    getClientes,
+    buscarPorCed,
+    getCategorias,
+    insertProduct,
+    getProductos,
+    productoPorId,
+    getProductosTabla,
+    hacerPedido
+} = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
+
+const storage = multer.diskStorage({
+
+    destination: 'uploads/',
+    filename: function(req, file, cb) {
+        cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
+    }
+})
+
+const upload = multer({
+    storage: storage
+});
 
 //Puerto
 const port = process.env.PORT || 3000;
@@ -63,14 +98,31 @@ app.get('/empleado', function(req, res) {
     }
 });
 
-app.get('/cliente', function(req, res) {
+app.get('/repartidor', function(req, res) {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        res.render('repartidor', {
+            login: true,
+            tipo: 'repartidor',
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+
+app.get('/cliente', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
+        let genero = await getGeneros();
         res.render('cliente', {
             login: true,
             titulo: 'Cliente',
             tipo: user.tipo,
-            name: user.nombre
+            name: user.nombre,
+            genero
         });
     } else {
         res.redirect('/')
@@ -80,12 +132,14 @@ app.get('/producto', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
         let proveedor = await getProvedores();
+        let categoria = await getCategorias();
         res.render('producto', {
             login: true,
             titulo: 'Producto',
             tipo: user.tipo,
             name: user.nombre,
-            prov: proveedor
+            prov: proveedor,
+            categoria
         });
     } else {
         res.redirect('/')
@@ -93,14 +147,19 @@ app.get('/producto', async(req, res) => {
 });
 
 
-app.get('/pedido', function(req, res) {
+app.get('/pedido', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
+        let prod = await getProductos();
         res.render('pedido', {
             login: true,
             titulo: 'Pedido',
             tipo: user.tipo,
-            name: user.nombre
+            name: user.nombre,
+            prod,
+            productos: req.session.productos,
+            cliente: req.session.cliente,
+            nuevoP: req.session.nuevoPro
         });
     } else {
         res.redirect('/')
@@ -129,30 +188,83 @@ app.post('/register', async(req, res) => {
         email: req.body.user,
         name: req.body.name,
         rol: req.body.rol,
-        pass: req.body.pass
+        pass: req.body.pass,
+        pass2: req.body.pass2
     };
     // Insertar en la base de datos y mensaje
     //let passhash = await bcryptjs.hash(user.pass, 8);
-    if (await authEmail(user.email)) {
-        insertUser(user.rol, user.name, user.email, user.pass).then(resp => res.render('login', {
-            alert: true,
-            alertTitle: 'Registrado Correctamente',
-            alertMessage: resp,
-            icon: 'success',
-            timer: 1700,
-            ruta: ''
-        }));
+    if (user.pass2 == user.pass) {
+        if (await authEmail(user.email)) {
+            insertUser(user.rol, user.name, user.email, user.pass).then(resp => res.render('login', {
+                alert: true,
+                alertTitle: 'Registrado Correctamente',
+                alertMessage: resp,
+                icon: 'success',
+                timer: 1700,
+                ruta: ''
+            }));
+        } else {
+            res.render('login', {
+                alert: true,
+                alertMessage: 'El email ya existe',
+                icon: 'error',
+                timer: 1500,
+                ruta: ''
+            });
+        }
+
     } else {
         res.render('login', {
             alert: true,
-            alertMessage: 'El email ya existe',
+            alertMessage: 'Las Contraseñas no coinciden',
             icon: 'error',
             timer: 1500,
             ruta: ''
         });
+
     }
 
+
+
 });
+
+// Registrar Producto
+app.post('/producto', upload.single('imagen'), async(req, res) => {
+    let user = req.session.user;
+    const producto = {
+        //codigo: req.body.codigo,
+        nombre: req.body.nombre,
+        proveedor: req.body.proveedor,
+        categoria: req.body.categoria,
+        imagen: storage.filename,
+        material: req.body.material,
+        peso: req.body.peso,
+        cm: req.body.cm,
+        color: req.body.color,
+        talla: req.body.talla,
+        origen: req.body.origen,
+        stock: req.body.stock,
+        precioMer: req.body.precioMer,
+        precioProv: req.body.precioProv
+    };
+    const tempPath = req.file.path;
+    const targetPath = path.join(__dirname, tempPath);
+    let msg = await insertProduct(producto.nombre, producto.proveedor, producto.categoria,
+        targetPath, producto.material, producto.peso, producto.cm, producto.color,
+        producto.talla, producto.origen, producto.stock, producto.precioMer, producto.precioProv);
+
+    res.render('producto', {
+        tipo: user.tipo,
+        alert: true,
+        alertTitle: msg,
+        icon: 'success',
+        timer: 1700,
+        ruta: 'producto'
+    })
+
+});
+
+
 
 // Autenticar Usuario
 app.post('/auth', async(req, res) => {
@@ -189,6 +301,10 @@ app.post('/auth', async(req, res) => {
                 email: authe[0].email,
                 tipo: authe[0].id_tipo
             }
+            req.session.productos = [];
+            req.session.cliente;
+            req.session.cod_pedido;
+            req.session.nuevoPro;
             res.render('login', {
                 alert: true,
                 alertTitle: "Conexion Exitosa",
@@ -245,6 +361,7 @@ app.post('/tableUser', async(req, res) => {
     }
 });
 app.post('/editUser', async(req, res) => {
+    let userr = req.session.user;
     const user = {
         id: req.body.id_empleado,
         email: req.body.user,
@@ -256,6 +373,7 @@ app.post('/editUser', async(req, res) => {
     const msg = await editUser(user.id, user.name, user.rol, user.email, user.pass);
 
     res.render('tableUser', {
+        tipo: userr.tipo,
         alert: true,
         alertTitle: msg,
         icon: 'success',
@@ -282,6 +400,44 @@ app.get('/tableProvee', async(req, res) => {
         res.redirect('/')
     }
 });
+
+// Tabla Clientes
+app.get('/tableClientes', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let client = await getClientes();
+
+        res.render('tableClientes', {
+            login: true,
+            titulo: 'Tablas',
+            tipo: user.tipo,
+            name: user.nombre,
+            client
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+// Tabla Productos
+app.get('/tableProductos', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let product = await getProductosTabla();
+
+        res.render('tableProductos', {
+            login: true,
+            titulo: 'Tablas',
+            tipo: user.tipo,
+            name: user.nombre,
+            product
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
 
 //Eliminar Usuario
 app.get('/deleteUser/:id', async(req, res) => {
@@ -328,11 +484,13 @@ app.get('/deleteProv/:id', async(req, res) => {
 
 // Registrar Proveedor
 app.post('/regprov', async(req, res) => {
+    let user = req.session.user;
     const prove = {
         name: req.body.name,
     };
     // Insertar en la base de datos y mensaje
     await insertProv(prove.name).then(resp => res.render('proveedor', {
+        tipo: user.tipo,
         alert: true,
         alertTitle: 'Registrado Correctamente',
         alertMessage: resp,
@@ -342,6 +500,164 @@ app.post('/regprov', async(req, res) => {
     }));
 
 });
+
+// Registrar Cliente
+app.post('/regcli', async(req, res) => {
+    let user = req.session.user;
+    const cli = {
+        cedula: req.body.ced,
+        name: req.body.name,
+        email: req.body.email,
+        edad: req.body.edad,
+        gen: req.body.genero,
+        tel: req.body.tel,
+        medio: req.body.medio
+    };
+    // Insertar en la base de datos y mensaje
+    await insertCliente(cli.cedula, cli.name, cli.email, cli.edad, cli.gen, cli.tel, cli.medio).then(resp => res.render('cliente', {
+        tipo: user.tipo,
+        alert: true,
+        alertTitle: 'Registrado Correctamente',
+        alertMessage: resp,
+        icon: 'success',
+        timer: 1500,
+        ruta: 'cliente'
+    }));
+
+});
+
+// Buscar CLiente
+app.post('/buscarcli', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let cedula = req.body.cedula;
+        let cliente = await buscarPorCed(cedula);
+        let prod = await getProductos();
+        if (cliente[0]) {
+            req.session.cliente = cliente[0];
+            res.render('pedido', {
+                login: true,
+                titulo: 'Pedido',
+                tipo: user.tipo,
+                name: user.nombre,
+                cliente: req.session.cliente,
+                prod,
+                nuevoP: req.session.nuevoPro,
+            });
+        } else {
+            req.session.nuevoPro = false;
+            res.render('pedido', {
+                tipo: user.tipo,
+                alert: true,
+                alertMessage: 'No existe el Usuario buscado',
+                icon: 'error',
+                timer: 1700,
+                ruta: 'pedido',
+                nuevoP: req.session.nuevoPro,
+
+            });
+
+        }
+    }
+
+});
+
+
+app.post('/addprod', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let idprod = req.body.producto;
+        let cant = req.body.cantidad;
+        let producto = await productoPorId(idprod);
+        let total = cant * producto[0].precio_mercado
+        let prod = await getProductos();
+
+
+        if (cant <= producto[0].stock) {
+
+            product = {
+                cod_pedido: `pedido-${req.session.cod_pedido}`,
+                id_cliente: req.session.cliente.cedula_cli,
+                codigoProd: producto[0].cod_prod,
+                nombreProd: producto[0].nombre_prod,
+                cant: parseInt(cant, 10),
+                total,
+                subtotal: total,
+                estado: "No entregado",
+                fechaEntrega: "2000-01-01"
+            }
+            req.session.productos.push(product);
+            res.render('pedido', {
+                login: true,
+                titulo: 'Pedido',
+                tipo: user.tipo,
+                name: user.nombre,
+                productos: req.session.productos,
+                cliente: req.session.cliente,
+                prod,
+                nuevoP: req.session.nuevoPro,
+            });
+        } else {
+            req.session.nuevoPro = true;
+            res.render('pedido', {
+                tipo: user.tipo,
+                alert: true,
+                alertMessage: 'No existe stock suficiente para el producto requerido',
+                icon: 'error',
+                timer: 1700,
+                ruta: 'pedido',
+                nuevoP: req.session.nuevoPro,
+            });
+
+        }
+    }
+
+});
+app.post('/nuevoPedido', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let nuevo = req.body.nuevo;
+        req.session.productos = [];
+        req.session.cliente;
+        req.session.cod_pedido = Date.now();
+        req.session.nuevoPro = true;
+        if (nuevo == "nuevo") {
+            res.render('pedido', {
+                login: true,
+                titulo: 'Pedido',
+                tipo: user.tipo,
+                name: user.nombre,
+                nuevoP: req.session.nuevoPro,
+                productos: req.session.productos,
+                cliente: null
+            });
+        }
+
+    }
+});
+app.post('/hacerPedido', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let msg = await hacerPedido(req.session.productos);
+        req.session.nuevoPro = false;
+        res.render('pedido', {
+            login: true,
+            titulo: 'Pedido',
+            name: user.nombre,
+            tipo: user.tipo,
+            alert: true,
+            alertMessage: msg,
+            icon: 'success',
+            timer: 1700,
+            ruta: 'pedido',
+            nuevoP: req.session.nuevoPro
+
+        });
+
+
+    }
+});
+
 
 app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");

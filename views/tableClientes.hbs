@@ -1,0 +1,77 @@
+{{> header }}
+<body id="page-top">
+    <div id="wrapper">
+        {{> sidebarAdmin}}
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {{> topbar}}
+                <div class="container-fluid">
+                <!-- Page Heading -->
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Tabla de Clientes</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Cedula</th>                    
+                                            <th class="text-center">Nombre</th>
+                                            <th class="text-center">Email</th>
+                                            <th class="text-center">Edad</th>
+                                            <th class="text-center">Género</th>
+                                            <th class="text-center">Teléfono</th>
+                                            <th class="text-center">Modificar</th>
+                                            <th class="text-center">Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each client}}
+                                        <tr>
+                                            <th class="text-center">{{this.cedula_cli}}</th>
+                                            <th class="text-center">{{this.nombre_cli}}</th>
+                                            <th class="text-center">{{this.email}}</th>
+                                            <th class="text-center">{{this.edad}}</th>
+                                            <th class="text-center">{{this.genero}}</th>
+                                            <th class="text-center">{{this.tlf}}</th>
+                                            <th class="text-center"><a href="/editProv/{{this.cod_prov}}" class="btn btn-primary btn-circle"><i class="fas fa-edit"></a></i></th>
+                                            <th class="text-center"><a href="/deleteProv/{{this.cod_prov}}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></th>
+                                        </tr>
+                                        {{/each}}
+                                                                              
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>          
+            </div>
+            </div>
+
+            
+        {{> footer}}   
+        </div>
+    </div>
+
+    {{> modalSalir}}   
+    
+{{> scripts}} 
+
+</body>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: '{{alertTitle}}',
+            text: '{{alertMessage}}',
+            icon: '{{icon}}',
+            showConfirmButton: '{{showConfirmButton}}',
+            timer: '{{timer}}'
+        }).then(()=>{
+            window.location = '/{{ruta}}'
+        })
+    </script>
+    {{/if}}
+</html>
+
