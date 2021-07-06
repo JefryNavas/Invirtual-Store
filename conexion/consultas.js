@@ -150,6 +150,17 @@ const getClientes = async() => {
 }
 
 
+const getCodPedidos = async() => {
+    try {
+        const res = await pool.query('select cod_ped, fecha_entrega from pedido group by cod_ped, fecha_entrega');
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
 const buscarPorCed = async(cedula) => {
     try {
         const res = await pool.query(`select * from cliente where cedula_cli = '${cedula}'`);
@@ -235,6 +246,18 @@ const hacerPedido = async(pedidos) => {
 }
 
 
+const buscarPorPedido = async(codigo) => {
+    try {
+        const res = await pool.query(`select pr.nombre_prod, ped.cantidad, ped.total, cl.nombre_cli, cl.tlf from producto as pr, pedido as ped, cliente as cl where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli
+        and ped.cod_ped = '${codigo}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
 module.exports = {
     getUsers,
     insertUser,
@@ -254,5 +277,7 @@ module.exports = {
     getProductos,
     productoPorId,
     getProductosTabla,
-    hacerPedido
+    hacerPedido,
+    getCodPedidos,
+    buscarPorPedido
 }
