@@ -26,7 +26,9 @@ const {
     getProductos,
     productoPorId,
     getProductosTabla,
-    hacerPedido
+    hacerPedido,
+    getCodPedidos,
+    buscarPorPedido
 } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -323,6 +325,19 @@ app.get('/logout', (req, res) => {
         res.redirect('/');
     })
 })
+
+app.get('/repartidor', function(req, res) {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        res.render('repartidor', {
+            login: true,
+            tipo: 'repartidor',
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
 
 // Tabla Usuarios 
 app.get('/tableUser', async(req, res) => {
@@ -653,8 +668,103 @@ app.post('/hacerPedido', async(req, res) => {
             nuevoP: req.session.nuevoPro
 
         });
+    }
+});
+
+app.get('/pagos', function(req, res) {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        res.render('pagos', {
+            login: true,
+            titulo: 'Pagos',
+            tipo: user.tipo,
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.get('/factura', function(req, res) {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        res.render('factura', {
+            login: true,
+            titulo: 'factura',
+            tipo: user.tipo,
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
+});
 
 
+app.get('/listaPedidos', async(req, res) => {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        let codped = await getCodPedidos();
+
+        res.render('listaPedidos', {
+            login: true,
+            titulo: 'Pedidos',
+            tipo: user.tipo,
+            name: user.nombre,
+            codped
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+// Listar Pedidos Individualmente
+app.post('/listaPedidos', async(req, res) => {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let codped = await getCodPedidos();
+        let resumen = await buscarPorPedido(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        res.render('listaPedidos', {
+            login: true,
+            titulo: 'Pedido',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            resumen,
+            cli: resumen[0].nombre_cli,
+            tel: resumen[0].tlf,
+            a_pagar
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+app.post('/pagos', async(req, res) => {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let resumen = await buscarPorPedido(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        res.render('pagos', {
+            login: true,
+            titulo: 'Pagar',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            resumen,
+            a_pagar
+        });
+    } else {
+        res.redirect('/')
     }
 });
 
