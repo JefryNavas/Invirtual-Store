@@ -231,7 +231,7 @@ const hacerPedido = async(pedidos) => {
     let res;
     try {
         for (const i in pedidos) {
-            const consulta = `insert into pedido(cantidad,total,estado,cod_prod,cedula_cli,cod_ped,fecha_entrega) values (${pedidos[i].cant},${pedidos[i].total},'${pedidos[i].estado}',${pedidos[i].codigoProd},'${pedidos[i].id_cliente}','${pedidos[i].cod_pedido}','${pedidos[i].fechaEntrega}')`;
+            const consulta = `insert into pedido(cantidad,total,estado,cod_prod,cedula_cli,cod_ped,fecha_entrega,calle_principal,calle_secundaria) values (${pedidos[i].cant},${pedidos[i].total},'${pedidos[i].estado}',${pedidos[i].codigoProd},'${pedidos[i].id_cliente}','${pedidos[i].cod_pedido}','${pedidos[i].fecha}','${pedidos[i].principal}','${pedidos[i].secundaria}')`;
             res = await pool.query(consulta);
         }
 

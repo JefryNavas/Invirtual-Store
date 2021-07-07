@@ -599,7 +599,9 @@ app.post('/addprod', async(req, res) => {
                 total,
                 subtotal: total,
                 estado: "No entregado",
-                fechaEntrega: "2000-01-01"
+                /* fechaEntrega: "",
+                calleP: "",
+                calleS: "" */
             }
             req.session.productos.push(product);
             res.render('pedido', {
@@ -653,6 +655,15 @@ app.post('/nuevoPedido', async(req, res) => {
 app.post('/hacerPedido', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
+        let fecha = req.body.fecha;
+        let principal = req.body.principal;
+        let secundaria = req.body.secundaria;
+        for (const i in req.session.productos) {
+            req.session.productos[i].fecha = fecha;
+            req.session.productos[i].principal = principal;
+            req.session.productos[i].secundaria = secundaria;
+        }
+        console.log(req.session.productos);
         let msg = await hacerPedido(req.session.productos);
         req.session.nuevoPro = false;
         res.render('pedido', {
