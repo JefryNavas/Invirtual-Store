@@ -1,0 +1,39 @@
+<!-- Modal -->
+    <div class="modal fade" id="modalPedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pedido</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+                </div>
+                <div class="modal-body">
+                    <form class="user" action="/hacerPedido" method="POST">
+
+                        <div class="form-group">
+                            <label>Fecha de Entrega:</label>
+                            <input type="date" class="form-control" name="fecha" required>
+                        </div>
+                        <hr>
+                        <label>Dirección: </label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="principal" placeholder="Calle Principal..." required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="secundaria" placeholder="Calle Secundaria..." required>
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <input type="submit" class="btn btn-primary" value="Confirmar Pedido">
+                        </div>
+                         
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+  
+
+  
