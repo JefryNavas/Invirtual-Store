@@ -152,7 +152,7 @@ const getClientes = async() => {
 
 const getCodPedidos = async() => {
     try {
-        const res = await pool.query('select cod_ped, fecha_entrega from pedido group by cod_ped, fecha_entrega');
+        const res = await pool.query('select cod_ped, fecha_entrega, calle_principal,calle_secundaria, estado from pedido group by cod_ped, fecha_entrega, calle_principal, calle_secundaria, estado');
         return res.rows;
 
     } catch (error) {
@@ -248,8 +248,61 @@ const hacerPedido = async(pedidos) => {
 
 const buscarPorPedido = async(codigo) => {
     try {
-        const res = await pool.query(`select pr.nombre_prod, ped.cantidad, ped.total, cl.nombre_cli, cl.tlf from producto as pr, pedido as ped, cliente as cl where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli
+        const res = await pool.query(`select pr.nombre_prod, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf from producto as pr, pedido as ped, cliente as cl where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli
         and ped.cod_ped = '${codigo}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const insertPago = async(fecha, cedula, monto, saldo, tipo_pago, forma, empleado, cod_pedido) => {
+    try {
+        const consulta = `insert into pagos(fecha,cedula_cli,monto_rec,saldo,tipo_pago,forma_pago,id_empleado,cod_ped) values ('${fecha}','${cedula}','${monto}','${saldo}','${tipo_pago}','${forma}','${empleado}','${cod_pedido}')`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Pago Registrado";
+        } else
+            return "No se pudo registrar el pago";
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+const updateEstado = async(codigo_ped, metodo) => {
+    try {
+        const consulta = `update pedido set estado = 'Entregado-${metodo}' where cod_ped = '${codigo_ped}'`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Estado Actualizado";
+        } else
+            return "No se pudo actualizar el estado";
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+const insertGanancias = async(id_empleado, cod_pedido, fecha, ganancia) => {
+    try {
+        const consulta = `insert into ganancias (id_empleado,cod_pedido,fecha,ganancia)  values ('${id_empleado}','${cod_pedido}','${fecha}','${ganancia}')`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Ganancia guardada";
+        } else
+            return "Ganancia guardada";
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const getGanancias = async(id_empleado) => {
+    try {
+        const res = await pool.query(`select * from ganancias where id_empleado = '${id_empleado}'`);
         return res.rows;
 
     } catch (error) {
@@ -279,5 +332,9 @@ module.exports = {
     getProductosTabla,
     hacerPedido,
     getCodPedidos,
-    buscarPorPedido
+    buscarPorPedido,
+    insertPago,
+    updateEstado,
+    insertGanancias,
+    getGanancias
 }

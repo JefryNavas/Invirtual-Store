@@ -7,6 +7,7 @@ const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 const mimeTypes = require("mime-types");
+const date = require('date-and-time');
 const {
     getUsers,
     insertUser,
@@ -28,7 +29,11 @@ const {
     getProductosTabla,
     hacerPedido,
     getCodPedidos,
-    buscarPorPedido
+    buscarPorPedido,
+    insertPago,
+    updateEstado,
+    insertGanancias,
+    getGanancias
 } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -301,7 +306,8 @@ app.post('/auth', async(req, res) => {
             req.session.user = {
                 nombre: authe[0].nombre,
                 email: authe[0].email,
-                tipo: authe[0].id_tipo
+                tipo: authe[0].id_tipo,
+                id: authe[0].id_empleado
             }
             req.session.productos = [];
             req.session.cliente;
@@ -394,7 +400,7 @@ app.post('/editUser', async(req, res) => {
         icon: 'success',
         timer: 1700,
         ruta: 'tableUser'
-    })
+    });
 
 })
 
@@ -663,7 +669,7 @@ app.post('/hacerPedido', async(req, res) => {
             req.session.productos[i].principal = principal;
             req.session.productos[i].secundaria = secundaria;
         }
-        console.log(req.session.productos);
+        //console.log(req.session.productos);
         let msg = await hacerPedido(req.session.productos);
         req.session.nuevoPro = false;
         res.render('pedido', {
@@ -778,6 +784,178 @@ app.post('/pagos', async(req, res) => {
         res.redirect('/')
     }
 });
+
+
+// Registrar Pagos
+app.post('/regpago', async(req, res) => {
+    let user = req.session.user;
+    const now = new Date();
+    let fecha = date.format(now, 'ddd, MMM DD YYYY');
+    let total = req.body.total
+    let saldo = total - req.body.monto
+    let idUser = user.id;
+    let codigo = req.body.codigop
+    let resumen = await buscarPorPedido(codigo);
+    let rp = ""
+    let estado = ""
+    if (saldo > 1) {
+        rp = `Cuota Registrada, Saldo Pendiente de: $${saldo} `
+        estado = "Pago Parcial"
+    } else {
+        rp = "Pago Registrado"
+        estado = "Cancelado"
+    }
+    let win = 0
+    if (total >= 60) {
+        win = 5;
+    } else {
+        win = 3;
+    }
+
+
+    const cli = {
+        fecha,
+        monto: req.body.monto,
+        saldo,
+        tipo: req.body.tipo,
+        forma: req.body.forma,
+        idUser,
+        codigo,
+        cedula: resumen[0].cedula_cli,
+        win
+    };
+    let actualizar = await updateEstado(codigo, estado);
+    let ganancias = await insertGanancias(cli.idUser, cli.codigo, cli.fecha, cli.win)
+        // Insertar en la base de datos y mensaje
+    await insertPago(cli.fecha, cli.cedula, cli.monto, cli.saldo, cli.tipo, cli.forma, cli.idUser, cli.codigo).then(resp => res.render('listaPedidos', {
+        login: true,
+        tipo: user.tipo,
+        name: user.nombre,
+        alert: true,
+        alertTitle: rp,
+        alertMessage: actualizar,
+        icon: 'success',
+        timer: 2500,
+        ruta: 'listaPedidos',
+        actualizar,
+        ganancias
+    }));
+
+});
+
+// Tabla Ganancias Repartidor 
+app.get('/tableGanancias', async(req, res) => {
+    if (req.session.loggedinRepartidor) {
+        let user = req.session.user;
+        let codigo = user.id
+        let ganancias = await getGanancias(codigo);
+        suma = 0
+        ganancias.forEach(element => {
+            suma += element.ganancia
+        });
+        res.render('tableGanancias', {
+            login: true,
+            titulo: 'Tus Ganancias',
+            tipo: user.tipo,
+            name: user.nombre,
+            ganancias,
+            suma
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+app.get('/tablePedidos', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let codped = await getCodPedidos();
+
+        res.render('tablePedidos', {
+            login: true,
+            titulo: 'Pedidos',
+            tipo: user.tipo,
+            name: user.nombre,
+            codped
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+// Listar Pedidos Individualmente
+app.post('/tablePedidos', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let codped = await getCodPedidos();
+        let resumen = await buscarPorPedido(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        res.render('tablePedidos', {
+            login: true,
+            titulo: 'Pedido',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            resumen,
+            cli: resumen[0].nombre_cli,
+            tel: resumen[0].tlf,
+            a_pagar
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+app.get('/tablePendientes', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let codped = await getCodPedidos();
+
+        res.render('tablePendientes', {
+            login: true,
+            titulo: 'Pendientes',
+            tipo: user.tipo,
+            name: user.nombre,
+            codped
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+// Listar Pedidos Individualmente
+app.post('/tablePendientes', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let codped = await getCodPedidos();
+        let resumen = await buscarPorPedido(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        res.render('tablePendientes', {
+            login: true,
+            titulo: 'Pendientes',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            resumen,
+            cli: resumen[0].nombre_cli,
+            tel: resumen[0].tlf,
+            a_pagar
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
 
 
 app.listen(port, () => {

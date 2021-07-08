@@ -12,52 +12,42 @@
                     <h1 class="h3 mb-4 text-gray-800">Registrar Pagos</h1>
                     <h3 class="h3 mb-4 text-gray-800">Pedido: {{codigo}} </h3>
                     <hr>
-                    <form class="user text-center" action="regcli" method="POST">
-                        <div class="row">
+                    <form class="user text-center" action="regpago" method="POST">
+                        <div class="row" align="center">
                             <div class="col-sm-12 col-lg-6">
                                  <div class="form-group">
                                      <label class="form-check-label">Total a Pagar ($) :</label>
-                                    <input type="text" class="form-control" name="total" value="{{a_pagar}} " disabled>
+                                    <input type="number" class="form-control" name="total" value="{{a_pagar}}" readonly>
                                 </div>
-                <div class="form-check">
-                    <label class="form-check-label">Escoja el Método de Pago :</label> <br>
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                    <label class="form-check-label" for="flexRadioDefault1">
-                    Efectivo
-                    </label> <br>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                    <label class="form-check-label" for="flexRadioDefault2">
-                    Transferencia
-                    </label>
-                </div>                           
                         <div class="form-group">
-                            <select class="form-control" style="border-radius: 10rem" name="medio" required>
+                            <select class="form-control" style="border-radius: 10rem" name="forma" required>
+                                <option selected>Método de Pago...</option>
+                                <option>Efectivo</option>
+                                <option>Transferencia</option>
+                            </select>
+                        </div>        
+                        <div class="form-group">
+                            <select class="form-control" style="border-radius: 10rem" name="tipo" required>
                                 <option selected>Tipo de Pago...</option>
                                 <option>Al Contado</option>
                                 <option>Por Cuotas</option>
                             </select>
                         </div>
-                            </div>
-                            <div class="col-sm-12 col-lg-6">
-                                
+                        
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Monto Recibido..." name="total"required>
+                                    <input type="number" class="form-control" placeholder="Monto del pago Recibido..." name="monto"required min="1" max="{{a_pagar}}" id="monto">
                                 </div>
 
-                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Cambio..." name="total"required>
-                                </div>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Saldo..." name="total"required>
+                                    <input type="text" class="form-control" value="{{codigo}}" name="codigop" hidden>
                                 </div>
+
                             </div>
                         </div>                                            
                         <hr>
                         <div class="form-group ">
                             <input type="submit" class="btn btn-primary btn-lg bg-gradient-primary" value="Registrar Pago">
-                            <a class="btn btn-primary btn-lg bg-gradient-primary" href="/factura">Generar Factura</a>
+                                {{!-- <a class="btn btn-primary btn-lg bg-gradient-primary" href="/factura">Generar Factura</a> --}}
                         </div>
                     </form>
                 </div>              
