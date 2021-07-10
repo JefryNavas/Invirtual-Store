@@ -160,6 +160,16 @@ const getCodPedidos = async() => {
     }
 }
 
+const getCodPedidosSS = async() => {
+    try {
+        const res = await pool.query('select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado from pedido as pe  group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado');
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 const buscarPorCed = async(cedula) => {
     try {
@@ -259,6 +269,20 @@ const buscarPorPedido = async(codigo) => {
     }
 }
 
+const buscarPorPedidoSS = async(codigo) => {
+    try {
+        const res = await pool.query(`select pr.nombre_prod, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf 
+        from producto as pr, pedido as ped, cliente as cl
+        where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli and ped.cod_ped = '${codigo}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+
 const insertPago = async(fecha, cedula, monto, saldo, tipo_pago, forma, empleado, cod_pedido) => {
     try {
         const consulta = `insert into pagos(fecha,cedula_cli,monto_rec,saldo,tipo_pago,forma_pago,id_empleado,cod_ped) values ('${fecha}','${cedula}','${monto}','${saldo}','${tipo_pago}','${forma}','${empleado}','${cod_pedido}')`
@@ -335,6 +359,16 @@ const updatePago = async(codigo_ped, monto, saldo) => {
     }
 }
 
+const getEstadoPed = async(cod) => {
+    try {
+        const res = await pool.query(`select * from pedido where cod_ped = '${cod}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     getUsers,
@@ -363,5 +397,8 @@ module.exports = {
     insertGanancias,
     getGanancias,
     pagoPorId,
-    updatePago
+    updatePago,
+    getCodPedidosSS,
+    buscarPorPedidoSS,
+    getEstadoPed
 }

@@ -35,7 +35,10 @@ const {
     insertGanancias,
     getGanancias,
     pagoPorId,
-    updatePago
+    updatePago,
+    getCodPedidosSS,
+    buscarPorPedidoSS,
+    getEstadoPed
 } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -722,7 +725,7 @@ app.get('/factura', function(req, res) {
 app.get('/listaPedidos', async(req, res) => {
     if (req.session.loggedinRepartidor) {
         let user = req.session.user;
-        let codped = await getCodPedidos();
+        let codped = await getCodPedidosSS();
 
         res.render('listaPedidos', {
             login: true,
@@ -741,8 +744,8 @@ app.post('/listaPedidos', async(req, res) => {
     if (req.session.loggedinRepartidor) {
         let user = req.session.user;
         const codigo = req.body.id;
-        let codped = await getCodPedidos();
-        let resumen = await buscarPorPedido(codigo);
+        //let codped = await getCodPedidos();
+        let resumen = await buscarPorPedidoSS(codigo);
         let a_pagar = 0
         resumen.forEach(element => {
             a_pagar += element.total
@@ -768,22 +771,41 @@ app.post('/pagos', async(req, res) => {
     if (req.session.loggedinRepartidor || req.session.loggedinAdmin) {
         let user = req.session.user;
         const codigo = req.body.id;
-        let resumen = await buscarPorPedido(codigo);
-        let a_pagar = 0
-        resumen.forEach(element => {
-            a_pagar += element.total
-        });
-        let saldo = resumen[0].saldo
-        res.render('pagos', {
-            login: true,
-            titulo: 'Pagar',
-            tipo: user.tipo,
-            name: user.nombre,
-            codigo,
-            resumen,
-            a_pagar,
-            saldo
-        });
+        let estado = await getEstadoPed(codigo);
+        if (user.tipo == 3) {
+            let resumen = await buscarPorPedidoSS(codigo);
+            let a_pagar = 0
+            resumen.forEach(element => {
+                a_pagar += element.total
+            });
+            res.render('pagos', {
+                login: true,
+                titulo: 'Pagar',
+                tipo: user.tipo,
+                name: user.nombre,
+                codigo,
+                resumen,
+                a_pagar
+            });
+        } else {
+
+            let resumen = await buscarPorPedido(codigo);
+            let a_pagar = 0
+            resumen.forEach(element => {
+                a_pagar += element.total
+            });
+            let saldo = resumen[0].saldo
+            res.render('pagos', {
+                login: true,
+                titulo: 'Pagar',
+                tipo: user.tipo,
+                name: user.nombre,
+                codigo,
+                resumen,
+                a_pagar,
+                saldo
+            });
+        }
     } else {
         res.redirect('/')
     }
@@ -799,7 +821,7 @@ app.post('/regpago', async(req, res) => {
     let saldo = total - req.body.monto
     let idUser = user.id;
     let codigo = req.body.codigop
-    let resumen = await buscarPorPedido(codigo);
+    let resumen = await buscarPorPedidoSS(codigo);
     let rp = ""
     let estado = ""
     if (saldo > 1) {
@@ -816,7 +838,6 @@ app.post('/regpago', async(req, res) => {
         win = 3;
     }
 
-
     const cli = {
         fecha,
         monto: req.body.monto,
@@ -829,7 +850,7 @@ app.post('/regpago', async(req, res) => {
         win
     };
     let actualizar = await updateEstado(codigo, estado);
-    if (cli.tipo == 3) {
+    if (user.tipo == 3) {
         let ganancias = await insertGanancias(cli.idUser, cli.codigo, cli.fecha, cli.win);
         // Insertar en la base de datos y mensaje
         await insertPago(cli.fecha, cli.cedula, cli.monto, cli.saldo, cli.tipo, cli.forma, cli.idUser, cli.codigo).then(resp => res.render('listaPedidos', {
@@ -865,8 +886,6 @@ app.post('/regpago', async(req, res) => {
         }));
     }
 
-
-
 });
 
 // Tabla Ganancias Repartidor 
@@ -896,7 +915,7 @@ app.get('/tableGanancias', async(req, res) => {
 app.get('/tablePedidos', async(req, res) => {
     if (req.session.loggedinAdmin) {
         let user = req.session.user;
-        let codped = await getCodPedidos();
+        let codped = await getCodPedidosSS();
 
         res.render('tablePedidos', {
             login: true,
@@ -915,8 +934,23 @@ app.post('/tablePedidos', async(req, res) => {
     if (req.session.loggedinAdmin) {
         let user = req.session.user;
         const codigo = req.body.id;
-        let codped = await getCodPedidos();
-        let resumen = await buscarPorPedido(codigo);
+        let estado = await getEstadoPed(codigo);
+        let codped = ""
+        let resumen = "";
+        let re1 = await getCodPedidos();
+        let re2 = await getCodPedidosSS();
+        let r1 = await buscarPorPedidoSS(codigo);
+        let r2 = await buscarPorPedido(codigo);
+        //console.log(estado[0].estado);
+        if (estado[0].estado == "No entregado") {
+            codped = re2;
+            resumen = r1;
+        } else {
+            codped = re1;
+            resumen = r2;
+        }
+        //let codped = await getCodPedidosSS();
+        //let resumen = await buscarPorPedido(codigo);
         let a_pagar = 0
         resumen.forEach(element => {
             a_pagar += element.total
@@ -983,6 +1017,52 @@ app.post('/tablePendientes', async(req, res) => {
         res.redirect('/')
     }
 });
+
+
+app.get('/tableNoEntregados', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let codped = await getCodPedidosSS();
+
+        res.render('tableNoEntregados', {
+            login: true,
+            titulo: 'Por Entregar',
+            tipo: user.tipo,
+            name: user.nombre,
+            codped
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+// Listar Pedidos Individualmente
+app.post('/tableNoEntregados', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        //let codped = await getCodPedidos();
+        let resumen = await buscarPorPedidoSS(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        res.render('tableNoEntregados', {
+            login: true,
+            titulo: 'Por Entregar',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            resumen,
+            cli: resumen[0].nombre_cli,
+            tel: resumen[0].tlf,
+            a_pagar
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
 
 
 app.listen(port, () => {
