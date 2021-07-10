@@ -1,7 +1,7 @@
 {{> header }}
 <body id="page-top">
     <div id="wrapper">
-        {{> sidebarRepartidor}}
+        {{> sidebarAdmin}}
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 {{> topbar}}
@@ -10,38 +10,34 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Tus Ganancias por tus pedidos</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Repartidores y sus Ganancias</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
-                                        <tr>
-                                            <th class="text-center">Código Pedido</th>                    
-                                            <th class="text-center">Fecha de Entrega</th>
-                                            <th class="text-center">Ganancia</th>
+                                        <tr>                  
+                                            <th class="text-center">Nombre del Repartidor</th>
+                                            <th class="text-center">Email</th>
+                                            <th class="text-center">Fecha</th>
+                                            <th class="text-center">Ganancia Total del Día</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each ganancias}}
+                                        {{#each repartidores}}
                                         <tr>
-                                            <th class="text-center">{{this.cod_pedido}}</th>
+                                            <th class="text-center">{{this.nombre}}</th>
+                                            <th class="text-center">{{this.email}}</th>
                                             <th class="text-center">{{this.fecha}}</th>
-                                            <th class="text-center">{{this.ganancia}}</th>
+                                            <th class="text-center">{{this.ganancia_total}}</th>
                                         </tr>
                                         {{/each}}
                                                                               
                                     </tbody>
                                 </table>
                             </div>
-                            <h5 class="m-0 font-weight-bold text-primary">Ganancias del Día: ${{suma_dia}}</h5>
-                            <h5 class="m-0 font-weight-bold text-primary">Ganancias Totales: ${{suma}}</h5>
                         </div>
-                    </div>
-
-
-                     
-
+                    </div>                  
             </div>
             </div>
 
@@ -51,15 +47,8 @@
     </div>
 
     {{> modalSalir}}   
-    
-<!-- Bootstrap core JavaScript-->
-    <script src="assets/vendor/jquery/jquery.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        {{> scripts}}  
 
-    <!-- Core plugin JavaScript-->
-    <script src="assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <!-- Custom scripts for all pages-->
-    <script src="assets/js/sb-admin-2.min.js"></script>
 
 </body>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

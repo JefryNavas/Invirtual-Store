@@ -369,6 +369,18 @@ const getEstadoPed = async(cod) => {
     }
 }
 
+const getRepartidores = async() => {
+    try {
+        const res = await pool.query(`select gan.id_empleado, emp.nombre, emp.email, gan.fecha, sum(gan.ganancia) as ganancia_total from ganancias as gan, empleado as emp 
+        where gan.id_empleado = emp.id_empleado  GROUP BY(gan.id_empleado,emp.nombre, gan.fecha,emp.email)`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
 
 module.exports = {
     getUsers,
@@ -400,5 +412,6 @@ module.exports = {
     updatePago,
     getCodPedidosSS,
     buscarPorPedidoSS,
-    getEstadoPed
+    getEstadoPed,
+    getRepartidores
 }

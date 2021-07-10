@@ -8,6 +8,7 @@ const multer = require("multer");
 const path = require("path");
 const mimeTypes = require("mime-types");
 const date = require('date-and-time');
+const moment = require('moment');
 const {
     getUsers,
     insertUser,
@@ -38,9 +39,11 @@ const {
     updatePago,
     getCodPedidosSS,
     buscarPorPedidoSS,
-    getEstadoPed
-} = require("./conexion/consultas")
-    // Helpers
+    getEstadoPed,
+    getRepartidores,
+} = require("./conexion/consultas");
+const { stringify } = require('querystring');
+// Helpers
 require('./hbs/helpers')
 
 const storage = multer.diskStorage({
@@ -771,7 +774,6 @@ app.post('/pagos', async(req, res) => {
     if (req.session.loggedinRepartidor || req.session.loggedinAdmin) {
         let user = req.session.user;
         const codigo = req.body.id;
-        let estado = await getEstadoPed(codigo);
         if (user.tipo == 3) {
             let resumen = await buscarPorPedidoSS(codigo);
             let a_pagar = 0
@@ -894,8 +896,19 @@ app.get('/tableGanancias', async(req, res) => {
         let user = req.session.user;
         let codigo = user.id
         let ganancias = await getGanancias(codigo);
-        suma = 0
+        var localTime = moment().format('YYYY-MM-DD');
+        var proposedDate = localTime + "T05:00:00.000Z";
+        proposedDate = JSON.stringify(proposedDate);
+        suma = 0;
+        suma_dia = 0;
+        //console.log(fecha);
         ganancias.forEach(element => {
+
+            fechas = JSON.stringify(element.fecha)
+            if (fechas == proposedDate) {
+                suma_dia += element.ganancia
+
+            }
             suma += element.ganancia
         });
         res.render('tableGanancias', {
@@ -904,6 +917,7 @@ app.get('/tableGanancias', async(req, res) => {
             tipo: user.tipo,
             name: user.nombre,
             ganancias,
+            suma_dia,
             suma
         });
     } else {
@@ -1062,6 +1076,26 @@ app.post('/tableNoEntregados', async(req, res) => {
         res.redirect('/')
     }
 });
+
+app.get('/tableRepartidores', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        //console.log(localTime);
+        let repartidores = await getRepartidores();
+        //console.log(repartidores.length);
+        res.render('tableRepartidores', {
+            login: true,
+            titulo: 'Repartidores',
+            tipo: user.tipo,
+            name: user.nombre,
+            repartidores,
+            //gandi: gananciadia[0].ganancia_total
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
 
 
 
