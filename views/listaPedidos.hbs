@@ -60,13 +60,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each codped}}
+                                        {{#each codped}}                                        
                                         <tr>
+                                        {{#if (eq this.estado "No entregado")}}
                                             <th class="text-center">{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
                                             <th class="text-center"><form action="/listaPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th>
                                             <th class="text-center"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
+                                        {{/if}} 
                                         </tr>
                                         {{/each}}
                                                                               
