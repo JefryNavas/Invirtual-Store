@@ -33,7 +33,9 @@ const {
     insertPago,
     updateEstado,
     insertGanancias,
-    getGanancias
+    getGanancias,
+    pagoPorId,
+    updatePago
 } = require("./conexion/consultas")
     // Helpers
 require('./hbs/helpers')
@@ -689,7 +691,7 @@ app.post('/hacerPedido', async(req, res) => {
 });
 
 app.get('/pagos', function(req, res) {
-    if (req.session.loggedinRepartidor) {
+    if (req.session.loggedinRepartidor || req.session.loggedinAdmin) {
         let user = req.session.user;
         res.render('pagos', {
             login: true,
@@ -763,7 +765,7 @@ app.post('/listaPedidos', async(req, res) => {
 
 
 app.post('/pagos', async(req, res) => {
-    if (req.session.loggedinRepartidor) {
+    if (req.session.loggedinRepartidor || req.session.loggedinAdmin) {
         let user = req.session.user;
         const codigo = req.body.id;
         let resumen = await buscarPorPedido(codigo);
@@ -771,6 +773,7 @@ app.post('/pagos', async(req, res) => {
         resumen.forEach(element => {
             a_pagar += element.total
         });
+        let saldo = resumen[0].saldo
         res.render('pagos', {
             login: true,
             titulo: 'Pagar',
@@ -778,7 +781,8 @@ app.post('/pagos', async(req, res) => {
             name: user.nombre,
             codigo,
             resumen,
-            a_pagar
+            a_pagar,
+            saldo
         });
     } else {
         res.redirect('/')
@@ -825,21 +829,43 @@ app.post('/regpago', async(req, res) => {
         win
     };
     let actualizar = await updateEstado(codigo, estado);
-    let ganancias = await insertGanancias(cli.idUser, cli.codigo, cli.fecha, cli.win)
+    if (cli.tipo == 3) {
+        let ganancias = await insertGanancias(cli.idUser, cli.codigo, cli.fecha, cli.win);
         // Insertar en la base de datos y mensaje
-    await insertPago(cli.fecha, cli.cedula, cli.monto, cli.saldo, cli.tipo, cli.forma, cli.idUser, cli.codigo).then(resp => res.render('listaPedidos', {
-        login: true,
-        tipo: user.tipo,
-        name: user.nombre,
-        alert: true,
-        alertTitle: rp,
-        alertMessage: actualizar,
-        icon: 'success',
-        timer: 2500,
-        ruta: 'listaPedidos',
-        actualizar,
-        ganancias
-    }));
+        await insertPago(cli.fecha, cli.cedula, cli.monto, cli.saldo, cli.tipo, cli.forma, cli.idUser, cli.codigo).then(resp => res.render('listaPedidos', {
+            login: true,
+            tipo: user.tipo,
+            name: user.nombre,
+            alert: true,
+            alertTitle: rp,
+            alertMessage: actualizar,
+            icon: 'success',
+            timer: 2500,
+            ruta: 'listaPedidos',
+            actualizar,
+            ganancias
+        }));
+    } else {
+        // Insertar en la base de datos y mensaje
+        let datos = await pagoPorId(cli.codigo);
+        let newmonto = datos[0].monto_rec + cli.monto;
+        let newsaldo = saldo
+
+        await updatePago(cli.codigo, newmonto, newsaldo).then(resp => res.render('tablePendientes', {
+            login: true,
+            tipo: user.tipo,
+            name: user.nombre,
+            alert: true,
+            alertTitle: rp,
+            alertMessage: "Correcto",
+            icon: 'success',
+            timer: 2500,
+            ruta: 'tablePendientes',
+            actualizar,
+        }));
+    }
+
+
 
 });
 
@@ -940,6 +966,7 @@ app.post('/tablePendientes', async(req, res) => {
         resumen.forEach(element => {
             a_pagar += element.total
         });
+        let saldo = resumen[0].saldo
         res.render('tablePendientes', {
             login: true,
             titulo: 'Pendientes',
@@ -949,13 +976,13 @@ app.post('/tablePendientes', async(req, res) => {
             resumen,
             cli: resumen[0].nombre_cli,
             tel: resumen[0].tlf,
-            a_pagar
+            a_pagar,
+            saldo
         });
     } else {
         res.redirect('/')
     }
 });
-
 
 
 app.listen(port, () => {

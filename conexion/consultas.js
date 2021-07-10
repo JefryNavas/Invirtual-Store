@@ -152,7 +152,7 @@ const getClientes = async() => {
 
 const getCodPedidos = async() => {
     try {
-        const res = await pool.query('select cod_ped, fecha_entrega, calle_principal,calle_secundaria, estado from pedido group by cod_ped, fecha_entrega, calle_principal, calle_secundaria, estado');
+        const res = await pool.query('select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado, pa.saldo from pedido as pe, pagos as pa where pe.cod_ped = pa.cod_ped group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pa.saldo');
         return res.rows;
 
     } catch (error) {
@@ -231,7 +231,8 @@ const hacerPedido = async(pedidos) => {
     let res;
     try {
         for (const i in pedidos) {
-            const consulta = `insert into pedido(cantidad,total,estado,cod_prod,cedula_cli,cod_ped,fecha_entrega,calle_principal,calle_secundaria) values (${pedidos[i].cant},${pedidos[i].total},'${pedidos[i].estado}',${pedidos[i].codigoProd},'${pedidos[i].id_cliente}','${pedidos[i].cod_pedido}','${pedidos[i].fecha}','${pedidos[i].principal}','${pedidos[i].secundaria}')`;
+            const consulta = `insert into pedido(cantidad,total,estado,cod_prod,cedula_cli,cod_ped,fecha_entrega,calle_principal,calle_secundaria) 
+            values (${pedidos[i].cant},${pedidos[i].total},'${pedidos[i].estado}',${pedidos[i].codigoProd},'${pedidos[i].id_cliente}','${pedidos[i].cod_pedido}','${pedidos[i].fecha}','${pedidos[i].principal}','${pedidos[i].secundaria}')`;
             res = await pool.query(consulta);
         }
 
@@ -248,8 +249,9 @@ const hacerPedido = async(pedidos) => {
 
 const buscarPorPedido = async(codigo) => {
     try {
-        const res = await pool.query(`select pr.nombre_prod, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf from producto as pr, pedido as ped, cliente as cl where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli
-        and ped.cod_ped = '${codigo}'`);
+        const res = await pool.query(`select pr.nombre_prod, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf, pag.saldo 
+        from producto as pr, pedido as ped, cliente as cl, pagos as pag
+        where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli and pag.cod_ped = ped.cod_ped and ped.cod_ped = '${codigo}'`);
         return res.rows;
 
     } catch (error) {
@@ -310,6 +312,29 @@ const getGanancias = async(id_empleado) => {
     }
 }
 
+const pagoPorId = async(cod_ped) => {
+    try {
+        const res = await pool.query(`select * from pagos where cod_ped = '${cod_ped}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const updatePago = async(codigo_ped, monto, saldo) => {
+    try {
+        const consulta = `update pagos set monto_rec = '${monto}', saldo = '${saldo}' where cod_ped = '${codigo_ped}'`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Saldo Actualizado";
+        } else
+            return "No se pudo actualizar";
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     getUsers,
@@ -336,5 +361,7 @@ module.exports = {
     insertPago,
     updateEstado,
     insertGanancias,
-    getGanancias
+    getGanancias,
+    pagoPorId,
+    updatePago
 }

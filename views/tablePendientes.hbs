@@ -23,6 +23,7 @@
                                             <th class="text-center">Producto</th>                    
                                             <th class="text-center">Cantidad</th>
                                             <th class="text-center">Total Producto</th>
+                                            
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -38,6 +39,7 @@
                                 </table>
                             </div>
                             <h4 class="m-0 font-weight-bold text-primary">Costo total del Pedido: ${{a_pagar}}</h4>
+                            <h4 class="m-0 font-weight-bold text-primary">Saldo Pendiente: ${{saldo}}</h4>
                         </div>
                     </div>
 
@@ -55,21 +57,22 @@
                                         <tr>
                                             <th class="text-center">Código Pedido</th>                    
                                             <th class="text-center">Fecha de Entrega</th>
-                                            <th class="text-center">Dirección</th>
                                             <th class="text-center">Estado</th>
+                                            <th class="text-center">Saldo Pendiente</th>
                                             <th class="text-center">Detalles</th>
+                                            <th class="text-center">Registrar Pago</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {{#each codped}}
-
                                         <tr>
                                             {{#if (ne this.estado "Entregado-Cancelado")}}
                                             <th class="text-center">{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
-                                            <th class="text-center">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
                                             <th class="text-center">{{this.estado}}</th>
+                                            <th class="text-center">{{this.saldo}}</th>
                                             <th class="text-center"><form action="/tablePendientes" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th>
+                                            <th class="text-center"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
                                             {{/if}}  
                                         </tr>
                                         {{/each}}

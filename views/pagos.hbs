@@ -2,7 +2,7 @@
 <body id="page-top">
     <div id="wrapper">
 
-        {{> sidebarRepartidor}}      
+        {{#ifEquals tipo "3"}} {{> sidebarRepartidor}} {{/ifEquals}} {{#ifEquals tipo "1"}} {{> sidebarAdmin}} {{/ifEquals}}   
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 {{> topbar}}
@@ -15,17 +15,25 @@
                     <form class="user text-center" action="regpago" method="POST">
                         <div class="row" align="center">
                             <div class="col-sm-12 col-lg-6">
+                                {{#ifEquals tipo "3"}}
                                  <div class="form-group">
-                                     <label class="form-check-label">Total a Pagar ($) :</label>
+                                    <label class="form-check-label">Total a Pagar ($) :</label>
                                     <input type="number" class="form-control" name="total" value="{{a_pagar}}" readonly>
                                 </div>
+                                {{else}}
+                                <div class="form-group">
+                                    <label class="form-check-label">Saldo a Pagar ($) :</label>
+                                    <input type="number" class="form-control" name="total" value="{{saldo}}" readonly>
+                                </div>
+                                {{/ifEquals}}
                         <div class="form-group">
                             <select class="form-control" style="border-radius: 10rem" name="forma" required>
                                 <option selected>Método de Pago...</option>
                                 <option>Efectivo</option>
                                 <option>Transferencia</option>
                             </select>
-                        </div>        
+                        </div> 
+                        {{#ifEquals tipo "3"}}      
                         <div class="form-group">
                             <select class="form-control" style="border-radius: 10rem" name="tipo" required>
                                 <option selected>Tipo de Pago...</option>
@@ -33,11 +41,25 @@
                                 <option>Por Cuotas</option>
                             </select>
                         </div>
-                        
+                        {{else}}
+                         <div class="form-group">
+                            <select class="form-control" style="border-radius: 10rem" name="tipo" hidden>
+                                <option>Tipo de Pago...</option>
+                                <option>Al Contado</option>
+                                <option selected>Por Cuotas</option>
+                            </select>
+                        </div>
+
+                        {{/ifEquals}}
+                                 {{#ifEquals tipo "3"}}
                                 <div class="form-group">
                                     <input type="number" class="form-control" placeholder="Monto del pago Recibido..." name="monto"required min="1" max="{{a_pagar}}" id="monto">
                                 </div>
-
+                                {{else}}
+                                <div class="form-group">
+                                    <input type="number" class="form-control" placeholder="Monto del pago Recibido..." name="monto"required min="1" max="{{saldo}}" id="monto">
+                                </div>
+                                {{/ifEquals}}
                                 <div class="form-group">
                                     <input type="text" class="form-control" value="{{codigo}}" name="codigop" hidden>
                                 </div>
