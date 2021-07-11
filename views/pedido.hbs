@@ -85,6 +85,7 @@
                                             <select class="box" name="producto" id="rol" required>
                                                 <option selected value="">Producto...</option>
                                                 {{#each prod}}
+                                                {{#if this.visible}}
                                                 {{#if (ne this.stock 0)}}
                                                 {{#ifEquals this.id_cat "1"}}
                                                 <option value={{this.cod_prod}}>{{this.nombre_prod}}   -Talla:{{this.talla}}  -Color:{{this.color}} </option>
@@ -92,7 +93,9 @@
                                                 <option value={{this.cod_prod}}>{{this.nombre_prod}}</option>
                                                 {{/ifEquals}}
                                                 {{/if}}
+                                                {{/if}}
                                                 {{/each}}
+                                                
                                              </select>
                                             
                                              <input type="number" class="box" placeholder="Cantidad" name="cantidad" required min="1" max="10">
@@ -118,6 +121,7 @@
                                                     <th class="text-center">Cantidad</th>
                                                     <th class="text-center">Total Producto</th>
                                                     <th class="text-center">Subtotal</th>
+                                                    <th class="text-center">Opción</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -127,7 +131,7 @@
                                                     <th class="text-center">{{this.cant}}</th>
                                                     <th class="text-center">{{this.total}}</th>
                                                     <th class="text-center">{{this.subtotal}}</th>
-
+                                                    <th class="text-center"><form action="/quitarProd" method="post"><input type="text" name="quitar" value="{{this.codigoProd}}" style="display:none;"><button type="submit" class="btn btn-danger btn-sm">quitar</button></form></th>
                                                 </tr>
                                                 {{/each}}
                                             </tbody>
@@ -177,9 +181,7 @@
         icon: '{{icon}}',
         showConfirmButton: '{{showConfirmButton}}',
         timer: '{{timer}}'
-    }).then(() => {
-        window.location = '/{{ruta}}'
-    })
+    });
 </script>
 {{/if}}
 

@@ -41,6 +41,7 @@ const {
     buscarPorPedidoSS,
     getEstadoPed,
     getRepartidores,
+    updateStockProducts
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -561,7 +562,6 @@ app.post('/buscarcli', async(req, res) => {
         let user = req.session.user;
         let cedula = req.body.cedula;
         let cliente = await buscarPorCed(cedula);
-        let prod = await getProductos();
         if (cliente[0]) {
             req.session.cliente = cliente[0];
             res.render('pedido', {
@@ -570,7 +570,7 @@ app.post('/buscarcli', async(req, res) => {
                 tipo: user.tipo,
                 name: user.nombre,
                 cliente: req.session.cliente,
-                prod,
+                prod: req.session.prod,
                 nuevoP: req.session.nuevoPro,
             });
         } else {
@@ -596,14 +596,12 @@ app.post('/addprod', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
         let idprod = req.body.producto;
-        let cant = req.body.cantidad;
+        let cant = parseInt(req.body.cantidad, 10);
         let producto = await productoPorId(idprod);
         let total = cant * producto[0].precio_mercado
-        let prod = await getProductos();
-
 
         if (cant <= producto[0].stock) {
-
+            let stock = producto[0].stock - cant;
             product = {
                 cod_pedido: `pedido-${req.session.cod_pedido}`,
                 id_cliente: req.session.cliente.cedula_cli,
@@ -613,11 +611,17 @@ app.post('/addprod', async(req, res) => {
                 total,
                 subtotal: total,
                 estado: "No entregado",
-                /* fechaEntrega: "",
-                calleP: "",
-                calleS: "" */
+                stock
             }
             req.session.productos.push(product);
+            for (const i in req.session.prod) {
+                for (const k in req.session.productos) {
+                    if (req.session.prod[i].cod_prod == req.session.productos[k].codigoProd) {
+                        req.session.prod[i].visible = false;
+                    }
+                }
+            }
+
             res.render('pedido', {
                 login: true,
                 titulo: 'Pedido',
@@ -625,19 +629,23 @@ app.post('/addprod', async(req, res) => {
                 name: user.nombre,
                 productos: req.session.productos,
                 cliente: req.session.cliente,
-                prod,
+                prod: req.session.prod,
                 nuevoP: req.session.nuevoPro,
             });
         } else {
             req.session.nuevoPro = true;
             res.render('pedido', {
+                productos: req.session.productos,
+                prod: req.session.prod,
+                cliente: req.session.cliente,
+                nuevoP: req.session.nuevoPro,
                 tipo: user.tipo,
                 alert: true,
                 alertMessage: 'No existe stock suficiente para el producto requerido',
                 icon: 'error',
                 timer: 1700,
                 ruta: 'pedido',
-                nuevoP: req.session.nuevoPro,
+
             });
 
         }
@@ -652,6 +660,10 @@ app.post('/nuevoPedido', async(req, res) => {
         req.session.cliente;
         req.session.cod_pedido = Date.now();
         req.session.nuevoPro = true;
+        req.session.prod = await getProductos();
+        for (const i in req.session.prod) {
+            req.session.prod[i].visible = true;
+        }
         if (nuevo == "nuevo") {
             res.render('pedido', {
                 login: true,
@@ -660,9 +672,39 @@ app.post('/nuevoPedido', async(req, res) => {
                 name: user.nombre,
                 nuevoP: req.session.nuevoPro,
                 productos: req.session.productos,
+                prod: req.session.prod,
                 cliente: null
             });
         }
+
+    }
+});
+app.post('/quitarProd', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        let cod_prod = req.body.quitar;
+
+        for (const i in req.session.prod) {
+            if (req.session.prod[i].cod_prod == cod_prod) {
+                req.session.prod[i].visible = true;
+            }
+        }
+        for (const i in req.session.productos) {
+            if (req.session.productos[i].codigoProd == cod_prod) {
+                req.session.productos.splice(i, 1);
+            }
+        }
+        res.render('pedido', {
+            login: true,
+            titulo: 'Pedido',
+            tipo: user.tipo,
+            name: user.nombre,
+            nuevoP: req.session.nuevoPro,
+            productos: req.session.productos,
+            prod: req.session.prod,
+            cliente: req.session.cliente,
+        });
+
 
     }
 });
@@ -677,8 +719,8 @@ app.post('/hacerPedido', async(req, res) => {
             req.session.productos[i].principal = principal;
             req.session.productos[i].secundaria = secundaria;
         }
-        //console.log(req.session.productos);
         let msg = await hacerPedido(req.session.productos);
+        let msg2 = await updateStockProducts(req.session.productos);
         req.session.nuevoPro = false;
         res.render('pedido', {
             login: true,
@@ -819,8 +861,10 @@ app.post('/regpago', async(req, res) => {
     let user = req.session.user;
     const now = new Date();
     let fecha = date.format(now, 'ddd, MMM DD YYYY');
-    let total = req.body.total
-    let saldo = total - req.body.monto
+
+    let total = parseInt(req.body.total, 10)
+    let monto = parseInt(req.body.monto, 10)
+    let saldo = total - monto
     let idUser = user.id;
     let codigo = req.body.codigop
     let resumen = await buscarPorPedidoSS(codigo);
@@ -842,7 +886,7 @@ app.post('/regpago', async(req, res) => {
 
     const cli = {
         fecha,
-        monto: req.body.monto,
+        monto,
         saldo,
         tipo: req.body.tipo,
         forma: req.body.forma,

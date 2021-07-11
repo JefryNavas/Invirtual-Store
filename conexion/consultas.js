@@ -379,8 +379,23 @@ const getRepartidores = async() => {
         return error.message;
     }
 }
+const updateStockProducts = async(pedidos) => {
+    let res;
+    try {
+        for (const i in pedidos) {
+            const consulta = `update producto set stock = ${pedidos[i].stock} where cod_prod = ${pedidos[i].codigoProd}`;
+            res = await pool.query(consulta);
+        }
 
+        if (res.rowCount == 1) {
+            return "Stock Actualizado";
+        } else
+            return "Error al actualizar el Stock";
 
+    } catch (error) {
+        return error.message;
+    }
+}
 
 module.exports = {
     getUsers,
@@ -413,5 +428,6 @@ module.exports = {
     getCodPedidosSS,
     buscarPorPedidoSS,
     getEstadoPed,
-    getRepartidores
+    getRepartidores,
+    updateStockProducts
 }
