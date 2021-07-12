@@ -397,6 +397,20 @@ const updateStockProducts = async(pedidos) => {
     }
 }
 
+const registrarFactura = async(factura) => {
+    try {
+        const consulta = `insert into factura(fecha_fac,cedula_cli,direccion,subtotal,total,nombre,email,cod_pedido,telefono) values ('${factura.fecha}','${factura.cedula}','${factura.direccion}','${factura.subtotal}','${factura.total}','${factura.nombre}','${factura.email}','${factura.cod_pedido}','${factura.telefono}')`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Factura Registrada";
+        } else
+            return "No se pudo registrar la factura";
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 module.exports = {
     getUsers,
     insertUser,
@@ -429,5 +443,6 @@ module.exports = {
     buscarPorPedidoSS,
     getEstadoPed,
     getRepartidores,
-    updateStockProducts
+    updateStockProducts,
+    registrarFactura
 }

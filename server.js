@@ -41,7 +41,8 @@ const {
     buscarPorPedidoSS,
     getEstadoPed,
     getRepartidores,
-    updateStockProducts
+    updateStockProducts,
+    registrarFactura
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -166,13 +167,12 @@ app.get('/producto', async(req, res) => {
 app.get('/pedido', async(req, res) => {
     if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
-        let prod = await getProductos();
         res.render('pedido', {
             login: true,
             titulo: 'Pedido',
             tipo: user.tipo,
             name: user.nombre,
-            prod,
+            prod: req.session.prod,
             productos: req.session.productos,
             cliente: req.session.cliente,
             nuevoP: req.session.nuevoPro
@@ -861,7 +861,6 @@ app.post('/regpago', async(req, res) => {
     let user = req.session.user;
     const now = new Date();
     let fecha = date.format(now, 'ddd, MMM DD YYYY');
-
     let total = parseInt(req.body.total, 10)
     let monto = parseInt(req.body.monto, 10)
     let saldo = total - monto
@@ -896,10 +895,13 @@ app.post('/regpago', async(req, res) => {
         win
     };
     let actualizar = await updateEstado(codigo, estado);
+    let cliente = await buscarPorCed(cli.cedula);
+    let iva = (cli.monto * 12) / 100;
+    let subtotal = cli.monto - iva;
     if (user.tipo == 3) {
         let ganancias = await insertGanancias(cli.idUser, cli.codigo, cli.fecha, cli.win);
         // Insertar en la base de datos y mensaje
-        await insertPago(cli.fecha, cli.cedula, cli.monto, cli.saldo, cli.tipo, cli.forma, cli.idUser, cli.codigo).then(resp => res.render('listaPedidos', {
+        await insertPago(cli.fecha, cli.cedula, cli.monto, cli.saldo, cli.tipo, cli.forma, cli.idUser, cli.codigo).then(resp => res.render('factura', {
             login: true,
             tipo: user.tipo,
             name: user.nombre,
@@ -908,9 +910,14 @@ app.post('/regpago', async(req, res) => {
             alertMessage: actualizar,
             icon: 'success',
             timer: 2500,
-            ruta: 'listaPedidos',
+            ruta: 'factura',
             actualizar,
-            ganancias
+            ganancias,
+            resumen,
+            cliente: cliente[0],
+            total: cli.monto,
+            subtotal,
+            cod_pedido: cli.codigo
         }));
     } else {
         // Insertar en la base de datos y mensaje
@@ -918,7 +925,7 @@ app.post('/regpago', async(req, res) => {
         let newmonto = datos[0].monto_rec + cli.monto;
         let newsaldo = saldo
 
-        await updatePago(cli.codigo, newmonto, newsaldo).then(resp => res.render('tablePendientes', {
+        await updatePago(cli.codigo, newmonto, newsaldo).then(resp => res.render('factura', {
             login: true,
             tipo: user.tipo,
             name: user.nombre,
@@ -927,8 +934,12 @@ app.post('/regpago', async(req, res) => {
             alertMessage: "Correcto",
             icon: 'success',
             timer: 2500,
-            ruta: 'tablePendientes',
             actualizar,
+            resumen,
+            cliente: cliente[0],
+            total: cli.monto,
+            subtotal,
+            cod_pedido: cli.codigo
         }));
     }
 
@@ -1141,7 +1152,47 @@ app.get('/tableRepartidores', async(req, res) => {
 });
 
 
+app.post('/regfactura', async(req, res) => {
+    let user = req.session.user;
+    const factura = {
+        fecha: req.body.fecha,
+        cedula: req.body.ced,
+        nombre: req.body.name,
+        email: req.body.email,
+        telefono: req.body.tel,
+        direccion: req.body.direccion,
+        subtotal: req.body.subtotal,
+        total: req.body.totalf,
+        cod_pedido: req.body.cod_pedido
+    };
+    // Insertar en la base de datos y mensaje
+    let msg = await registrarFactura(factura);
 
+    if (user.tipo == 3) {
+        res.render('listaPedidos', {
+            login: true,
+            alert: true,
+            alertTitle: 'Factura Guardada',
+            alertMessage: msg,
+            icon: 'success',
+            timer: 1500,
+            ruta: 'listaPedidos'
+        });
+
+    } else {
+        res.render('tablePendientes', {
+            login: true,
+            alert: true,
+            alertTitle: 'Factura Guardada',
+            alertMessage: msg,
+            icon: 'success',
+            timer: 1500,
+            ruta: 'tablePendientes'
+        });
+
+    }
+
+});
 
 app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");
