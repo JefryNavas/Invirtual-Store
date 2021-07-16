@@ -452,6 +452,30 @@ const updateCli = async(user, pass) => {
     }
 }
 
+const pedidosPorCliente = async(cedula) => {
+    try {
+        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.cedula_cli, pe.calle_principal, pe.calle_secundaria
+        from pedido as pe where pe.cedula_cli = '${cedula}'
+        group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pe.cedula_cli`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const getCodPedidosCliente = async(cedula) => {
+    try {
+        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado, pa.saldo from pedido as pe, pagos as pa 
+        where pe.cod_ped = pa.cod_ped and pe.cedula_cli = '${cedula}' and pa.saldo >0
+        group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pa.saldo`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     getUsers,
@@ -489,5 +513,7 @@ module.exports = {
     registrarFactura,
     authEmailCli,
     updateCli,
-    authCli
+    authCli,
+    pedidosPorCliente,
+    getCodPedidosCliente
 }

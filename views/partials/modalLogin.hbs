@@ -30,12 +30,16 @@
                                 <input type="text" class="form-control form-control-user" name="name" placeholder="Nombre y Apellido...">
                             </div>
                             <div class="form-group">
-                                <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
+                            <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
                             <option selected value="">Función de la empresa</option>
                             <option value="2">Empleado</option>
                             <option value="3">Repartidor</option>
                           </select>
                             </div>
+
+                        <div class="form-group">
+                            <input type="text" class="form-control form-control-user" name="placa" placeholder="Número de Placa (Solo Repartidor)..." maxlength="6">
+                        </div>
 
                             <div class="form-group">
                                 <input type="email" class="form-control form-control-user" name="user" placeholder="Correo Electrónico..." required>
@@ -53,9 +57,6 @@
                     <div class="tab-pane fade" id="cliente" role="tabpanel" aria-labelledby="pills-profile-tab">
                         <form class="user" action="updateCli" method="POST">
 
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-user" name="placa" placeholder="Número de Placa (Solo Repartidor)..." maxlength="6">
-                        </div>
                         <div class="form-group">
                             <input type="email" class="form-control form-control-user" name="user" placeholder="Correo Electrónico..." required>
                         </div>

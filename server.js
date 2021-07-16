@@ -45,7 +45,9 @@ const {
     registrarFactura,
     authEmailCli,
     updateCli,
-    authCli
+    authCli,
+    pedidosPorCliente,
+    getCodPedidosCliente
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -1288,6 +1290,7 @@ app.post('/authCliente', async(req, res) => {
         }
     }
 });
+
 app.get('/client', function(req, res) {
     if (req.session.loggedinCliente) {
         let user = req.session.user;
@@ -1301,6 +1304,95 @@ app.get('/client', function(req, res) {
         res.redirect('/')
     }
 });
+
+app.get('/tusPedidos', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        let cedula = user.id;
+        //console.log(cedula);
+        let pedidos = await pedidosPorCliente(cedula);
+        res.render('tusPedidos', {
+            login: true,
+            titulo: 'Pedidos',
+            tipo: 'cliente',
+            name: user.nombre,
+            pedidos
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.post('/tusPedidos', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        let cedula = user.id;
+        //console.log(cedula);
+        let codigo = req.body.id
+            //let pedidos = await pedidosPorCliente(cedula);
+        let resumen = await buscarPorPedidoSS(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        res.render('tusPedidos', {
+            login: true,
+            titulo: 'Pedidos',
+            tipo: 'cliente',
+            name: user.nombre,
+            resumen,
+            a_pagar
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.get('/pendientesCliente', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        let cedula = user.id;
+        //console.log(cedula);
+        let codped = await getCodPedidosCliente(cedula);
+        res.render('pendientesCliente', {
+            login: true,
+            titulo: 'Pendientes',
+            tipo: 'cliente',
+            name: user.nombre,
+            codped
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.post('/pendientesCliente', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let resumen = await buscarPorPedido(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        let saldo = resumen[0].saldo
+        res.render('pendientesCliente', {
+            login: true,
+            titulo: 'Pendientes',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            resumen,
+            a_pagar,
+            saldo
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+
+
 
 app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");
