@@ -1,27 +1,57 @@
 <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content bg-dark text-white">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Crea tu cuenta</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-                </div>
-                <div class="modal-body text-center">
-                    <img src="assets/img/logoT.png" width="20%" alt="">
-                    <form class="user" action="register" method="POST">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Crea tu cuenta</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="assets/img/logoT.png" width="20%" alt="">
+                <h6>Quién desea registrarse?</h6>
+                <div class="d-flex justify-content-center">
+                    <ul class="nav nav-pills m-4" id="pills-tab" role="tablist">
+                        <li class="nav-item mr-2">
+                            <a class="nav-link bg-success text-white" id="pills-home-tab" data-toggle="pill" href="#empleado" role="tab" aria-selected="true">Empleado</a>
+                        </li>
 
-                        <div class="form-group">
-                            <input type="text" class="form-control form-control-user" name="name" placeholder="Nombre y Apellido...">
-                        </div>
-                        <div class="form-group">
-                            <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
-                                <option selected value="">Función de la empresa</option>
-                                <option value="2">Empleado</option>
-                                <option value="3">Repartidor</option>
-                              </select>
-                        </div>
+                        <li class="nav-item">
+                            <a class="nav-link bg-success text-white" id="pills-profile-tab" data-toggle="pill" href="#cliente" role="tab" aria-selected="false">Cliente</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade" id="empleado" role="tabpanel" aria-labelledby="pills-home-tab">
+                        <form class="user" action="register" method="POST">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" name="name" placeholder="Nombre y Apellido...">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" name="rol" id="rol" style="border-radius: 10rem">
+                            <option selected value="">Función de la empresa</option>
+                            <option value="2">Empleado</option>
+                            <option value="3">Repartidor</option>
+                          </select>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="email" class="form-control form-control-user" name="user" placeholder="Correo Electrónico..." required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control form-control-user" name="pass" placeholder="Contraseña..." required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control form-control-user" name="pass2" placeholder="Confirmar Contraseña..." required>
+                            </div>
+                            <hr>
+                            <input type="submit" class="btn btn-primary btn-user btn-block" value="Crear Cuenta">
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="cliente" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        <form class="user" action="updateCli" method="POST">
 
                         <div class="form-group">
                             <input type="text" class="form-control form-control-user" name="placa" placeholder="Número de Placa (Solo Repartidor)..." maxlength="6">
@@ -40,9 +70,9 @@
                     </form>
                 </div>
 
+
             </div>
+
         </div>
     </div>
-  
-
-  
+</div>

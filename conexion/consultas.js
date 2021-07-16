@@ -63,6 +63,18 @@ const authUser = async(email, pass) => {
         return error.message;
     }
 }
+const authCli = async(email, pass) => {
+    try {
+        const res = await pool.query(`select * from cliente where email='${email}' and password = '${pass}'`);
+        if (res.rows == 0) {
+            return false;
+        }
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
 const authEmail = async(email) => {
     try {
         const res = await pool.query(`select * from empleado where email='${email}'`);
@@ -70,6 +82,19 @@ const authEmail = async(email) => {
             return false;
         }
         return true;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+const authEmailCli = async(email) => {
+    try {
+        const res = await pool.query(`select * from cliente where email='${email}'`);
+
+        if (!res.rows) {
+            return false;
+        }
+        return res.rows;
 
     } catch (error) {
         return error.message;
@@ -411,6 +436,22 @@ const registrarFactura = async(factura) => {
         return error.message;
     }
 }
+const updateCli = async(user, pass) => {
+    try {
+        const consulta = `update cliente set password = '${pass}' where cedula_cli = '${user.cedula_cli}'`
+        console.log(consulta);
+        const res = await pool.query(consulta);
+        console.log(res);
+        if (res.rowCount == 1) {
+            return "Cliente Atualizado";
+        } else
+            return "No se pudo Actualizar el cliente";
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     getUsers,
@@ -445,5 +486,8 @@ module.exports = {
     getEstadoPed,
     getRepartidores,
     updateStockProducts,
-    registrarFactura
+    registrarFactura,
+    authEmailCli,
+    updateCli,
+    authCli
 }

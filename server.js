@@ -42,7 +42,10 @@ const {
     getEstadoPed,
     getRepartidores,
     updateStockProducts,
-    registrarFactura
+    registrarFactura,
+    authEmailCli,
+    updateCli,
+    authCli
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -1200,6 +1203,103 @@ app.post('/regfactura', async(req, res) => {
 
     }
 
+});
+
+app.post('/updateCli', async(req, res) => {
+    const user = {
+        email: req.body.user,
+        pass: req.body.pass,
+        pass2: req.body.pass2
+    };
+    // Insertar en la base de datos y mensaje
+    //let passhash = await bcryptjs.hash(user.pass, 8);
+    if (user.pass2 == user.pass) {
+        let usuario = await authEmailCli(user.email);
+        if (usuario[0]) {
+            updateCli(usuario[0], user.pass).then(resp => res.render('login', {
+                alert: true,
+                alertTitle: 'Usuario actualizado Correctamente',
+                alertMessage: resp,
+                icon: 'success',
+                timer: 1700,
+                ruta: ''
+            }));
+        } else {
+            res.render('login', {
+                alert: true,
+                alertMessage: 'El usuario no se ha registrado',
+                icon: 'error',
+                timer: 1500,
+                ruta: ''
+            });
+        }
+
+    } else {
+        res.render('login', {
+            alert: true,
+            alertMessage: 'Las Contraseñas no coinciden',
+            icon: 'error',
+            timer: 1500,
+            ruta: ''
+        });
+
+    }
+
+
+
+
+
+});
+
+app.post('/authCliente', async(req, res) => {
+    const user = req.body.user;
+    const pass = req.body.pass;
+    //let passhash = await bcryptjs.hash(pass, 8);
+
+    if (user && pass) {
+        const authe = await authCli(user, pass);
+        if (authe == false) {
+            res.render('login', {
+                alert: true,
+                alertTitle: "Error",
+                alertMessage: 'Usuario y/o Contraseña incorrectas',
+                icon: 'error',
+                showConfirmButton: true,
+                ruta: ''
+
+            });
+        } else {
+            req.session.loggedinCliente = true;
+
+            req.session.user = {
+                nombre: authe[0].nombre_cli,
+                email: authe[0].email,
+                tipo: 4,
+                id: authe[0].cedula_cli
+            }
+            res.render('login', {
+                alert: true,
+                alertTitle: "Conexion Exitosa",
+                alertMessage: 'Login Correcto',
+                icon: 'success',
+                timer: 1500,
+                ruta: "client"
+            });
+        }
+    }
+});
+app.get('/client', function(req, res) {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        res.render('client', {
+            login: true,
+            titulo: 'Inicio',
+            tipo: 'cliente',
+            name: user.nombre
+        });
+    } else {
+        res.redirect('/')
+    }
 });
 
 app.listen(port, () => {
