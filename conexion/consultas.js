@@ -9,9 +9,10 @@ const getUsers = async() => {
         return error.message;
     }
 }
-const insertUser = async(tipo, nombre, email, password) => {
+const insertUser = async(tipo, nombre, email, password, placa) => {
+
     try {
-        const consulta = `insert into empleado(id_tipo,nombre,email,password) values ('${tipo}','${nombre}','${email}','${password}')`
+        const consulta = `insert into empleado(id_tipo,nombre,email,password,placa) values ('${tipo}','${nombre}','${email}','${password}','${placa}')`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
             return "Usuario registrado";

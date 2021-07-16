@@ -200,18 +200,27 @@ app.get('/proveedor', function(req, res) {
 
 // Registrar Usuario
 app.post('/register', async(req, res) => {
+
+    let rol = req.body.rol;
+    let placa = ""
+    if (rol == 3) {
+        placa = req.body.placa
+    } else {
+        placa = ""
+    }
     const user = {
         email: req.body.user,
         name: req.body.name,
-        rol: req.body.rol,
+        rol,
         pass: req.body.pass,
-        pass2: req.body.pass2
+        pass2: req.body.pass2,
+        placa
     };
     // Insertar en la base de datos y mensaje
     //let passhash = await bcryptjs.hash(user.pass, 8);
     if (user.pass2 == user.pass) {
         if (await authEmail(user.email)) {
-            insertUser(user.rol, user.name, user.email, user.pass).then(resp => res.render('login', {
+            insertUser(user.rol, user.name, user.email, user.pass, user.placa).then(resp => res.render('login', {
                 alert: true,
                 alertTitle: 'Registrado Correctamente',
                 alertMessage: resp,
@@ -279,7 +288,6 @@ app.post('/producto', upload.single('imagen'), async(req, res) => {
     })
 
 });
-
 
 
 // Autenticar Usuario
