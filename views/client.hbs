@@ -1,0 +1,29 @@
+{{> header }}
+<body id="page-top">
+    <div id="wrapper">
+        {{> sidebarCliente}}
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {{> topbar}}
+                <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-4 text-gray-800">Bienvenido {{ name }}</h1>
+                <div align ="center">
+                    <img src="assets/img/empleado.jpg" alt="" width="50%" height="50%">
+                </div>
+
+            </div>
+            </div>
+
+            
+        {{> footer}}   
+        </div>
+    </div>
+    
+
+    {{> modalSalir}}   
+{{> scripts}} 
+</body>
+
+</html>
