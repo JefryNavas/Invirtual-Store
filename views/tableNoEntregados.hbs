@@ -63,7 +63,14 @@
                                     <tbody>
                                         {{#each codped}}
                                         <tr>
-                                            {{#if (eq this.estado "No entregado")}}
+                                            {{#if (or
+                                            (eq this.estado "No entregado")  
+                                            (eq this.estado "Pedido Registrado")
+                                            (eq this.estado "Conductor Asignado")
+                                            (eq this.estado "Conductor en Camino")
+                                            )
+
+                                            }}
                                             <th class="text-center">{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.estado}}</th>

@@ -14,6 +14,7 @@
                         <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido: {{codigo}} </h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Da click a continuación para iniciar el pedido: <button class="btn btn-primary btn-circle"><a  data-toggle="modal" data-target="#exampleModal"><i class="fas fa-stopwatch"></i> </a></button> </h6> 
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -62,11 +63,16 @@
                                     <tbody>
                                         {{#each codped}}                                        
                                         <tr>
-                                        {{#if (eq this.estado "No entregado")}}
+                                        {{#if (or
+                                            (eq this.estado "No entregado")  
+                                            (eq this.estado "Pedido Registrado")
+                                            (eq this.estado "Conductor Asignado")
+                                            )
+                                            }}
                                             <th class="text-center">{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
-                                            <th class="text-center"><form action="/listaPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th>
+                                            <th class="text-center"><form action="/listaPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th> 
                                             <th class="text-center"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
                                         {{/if}} 
                                         </tr>
@@ -87,7 +93,7 @@
         </div>
     </div>
 
-    {{> modalSalir}}   
+    {{> modalSalir}}    {{> modalAceptar}}   
     
 <!-- Bootstrap core JavaScript-->
     <script src="assets/vendor/jquery/jquery.min.js"></script>

@@ -47,7 +47,11 @@ const {
     updateCli,
     authCli,
     pedidosPorCliente,
-    getCodPedidosCliente
+    getCodPedidosCliente,
+    getFactura,
+    getFacturaCliente,
+    getResumenFactura,
+    updateEstadoConductor
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -623,7 +627,7 @@ app.post('/addprod', async(req, res) => {
                 cant: parseInt(cant, 10),
                 total,
                 subtotal: total,
-                estado: "No entregado",
+                estado: "Pedido Registrado",
                 stock
             }
             req.session.productos.push(product);
@@ -829,6 +833,7 @@ app.post('/pagos', async(req, res) => {
     if (req.session.loggedinRepartidor || req.session.loggedinAdmin) {
         let user = req.session.user;
         const codigo = req.body.id;
+        let actualizar = await updateEstadoConductor(codigo);
         if (user.tipo == 3) {
             let resumen = await buscarPorPedidoSS(codigo);
             let a_pagar = 0
@@ -842,7 +847,8 @@ app.post('/pagos', async(req, res) => {
                 name: user.nombre,
                 codigo,
                 resumen,
-                a_pagar
+                a_pagar,
+                actualizar
             });
         } else {
 
@@ -1024,7 +1030,7 @@ app.post('/tablePedidos', async(req, res) => {
         let r1 = await buscarPorPedidoSS(codigo);
         let r2 = await buscarPorPedido(codigo);
         //console.log(estado[0].estado);
-        if (estado[0].estado == "No entregado") {
+        if ((estado[0].estado != "Entregado-Pago Parcial") || (estado[0].estado != "Entregado-Cancelado")) {
             codped = re2;
             resumen = r1;
         } else {
@@ -1392,6 +1398,140 @@ app.post('/pendientesCliente', async(req, res) => {
 });
 
 
+app.get('/tusFacturas', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        let cedula = user.id;
+        //console.log(cedula);
+        let facturas = await getFacturaCliente(cedula);
+        res.render('tusFacturas', {
+            login: true,
+            titulo: 'Facturas',
+            tipo: 'cliente',
+            name: user.nombre,
+            facturas
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.post('/tusFacturas', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let resumen = await getResumenFactura(codigo);
+        let codped = resumen[0].cod_pedido
+        let detalle = await buscarPorPedido(codped)
+        res.render('tusFacturas', {
+            login: true,
+            titulo: 'Detalle Factura',
+            tipo: user.tipo,
+            name: user.nombre,
+            codped,
+            resumen,
+            fecha: resumen[0].fecha_fac,
+            nombre: resumen[0].nombre,
+            cedula: resumen[0].cedula_cli,
+            direccion: resumen[0].direccion,
+            email: resumen[0].email,
+            tlf: resumen[0].telefono,
+            subtotal: resumen[0].subtotal,
+            total: resumen[0].total,
+            detalle
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.get('/tableFacturas', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let cedula = user.id;
+        //console.log(cedula);
+        let facturas = await getFactura();
+        res.render('tableFacturas', {
+            login: true,
+            titulo: 'Facturas',
+            tipo: 'cliente',
+            name: user.nombre,
+            facturas
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.post('/tableFacturas', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let resumen = await getResumenFactura(codigo);
+        let codped = resumen[0].cod_pedido
+        let detalle = await buscarPorPedido(codped)
+        res.render('tableFacturas', {
+            login: true,
+            titulo: 'Detalle Factura',
+            tipo: user.tipo,
+            name: user.nombre,
+            codped,
+            resumen,
+            fecha: resumen[0].fecha_fac,
+            nombre: resumen[0].nombre,
+            cedula: resumen[0].cedula_cli,
+            direccion: resumen[0].direccion,
+            email: resumen[0].email,
+            tlf: resumen[0].telefono,
+            subtotal: resumen[0].subtotal,
+            total: resumen[0].total,
+            detalle
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.get('/seguimiento', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        let cedula = user.id;
+        //console.log(cedula);
+        //let pedidos = await pedidosPorCliente(cedula);
+        res.render('seguimiento', {
+            login: true,
+            titulo: 'Seguimiento',
+            tipo: 'cliente',
+            name: user.nombre,
+
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.post('/seguimiento', async(req, res) => {
+    if (req.session.loggedinCliente) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let resumen = await buscarPorPedidoSS(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        res.render('seguimiento', {
+            login: true,
+            titulo: 'Seguimiento',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            fecha: resumen[0].fecha_entrega,
+            a_pagar
+        });
+    } else {
+        res.redirect('/')
+    }
+});
 
 
 app.listen(port, () => {

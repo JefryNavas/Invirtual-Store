@@ -507,6 +507,20 @@ const getResumenFactura = async(codigo) => {
 }
 
 
+const updateEstadoConductor = async(codigo_ped) => {
+    try {
+        const consulta = `update pedido set estado = 'Conductor en Camino' where cod_ped = '${codigo_ped}'`
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Estado Actualizado";
+        } else
+            return "No se pudo actualizar el estado";
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
 module.exports = {
     getUsers,
     insertUser,
@@ -548,5 +562,6 @@ module.exports = {
     getCodPedidosCliente,
     getFactura,
     getFacturaCliente,
-    getResumenFactura
+    getResumenFactura,
+    updateEstadoConductor
 }

@@ -1,0 +1,158 @@
+{{> header }}
+<body id="page-top">
+    <div id="wrapper">
+        {{> sidebarAdmin}}
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                {{> topbar}}
+                <div class="container-fluid">
+                <!-- Page Heading -->
+                    <!-- DataTales Example -->
+                     {{#if resumen}}
+
+                <!-- Page Heading -->
+                    <h1 class="h3 mb-4 text-gray-800">Detalles de tu Factura</h1>
+
+                    <form class="user text-center" action="" method="POST">
+                        <input type="text" style="display: none;" value="{{cod_ped}}" name="cod_pedido">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-6">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="fechaActual" name="fecha" value="{{fecha}}" readonly>
+                        </div>
+                                <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Nombre y Apellido..." name="name" value="{{nombre}}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Cédula..." name="ced" value="{{cedula}}"  readonly>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="E-mail..." name="email" value="{{email}}" readonly>
+                        </div>
+                            </div>
+                            <div class="col-sm-12 col-lg-6">
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Teléfono..." name="tel" value="{{tlf}}" minlength="7"  maxlength="10" readonly> 
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Dirección..." name="direccion"  value="{{direccion}}"  readonly> 
+                        </div>
+                        <div class="form-group">
+                            <label>Subtotal:</label>
+                            <input type="number" class="sinborde" placeholder="Subtotal..." name="subtotal" value="{{subtotal}}" readonly> 
+                        </div>
+                        <div class="form-group">
+                            <label>Total Pago:</label>
+                            <input type="number" class="sinborde" placeholder="Total..." name="totalf" value="{{total}}" readonly> 
+                        </div>
+
+                            </div>
+                        </div>                                            
+                        <div class="topbar-divider d-none d-sm-block"></div>
+                        <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido</h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Nombre Producto</th>
+                                                    <th class="text-center">Cantidad</th>
+                                                    <th class="text-center">Total Producto</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#each detalle}}
+                                                <tr>
+                                                    <th class="text-center">{{this.nombre_prod}}</th>
+                                                    <th class="text-center">{{this.cantidad}}</th>
+                                                    <th class="text-center">{{this.total}}</th>
+                                                </tr>
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
+                                    </div>                                  
+                                </div>
+                            </div>
+
+                        <div class="form-group ">
+                            <button class="btn btn-primary btn-lg bg-gradient-primary"><a href="tableFacturas" style="color:#DEECE8">Volver</a></button>
+                        </div>
+                    </form>
+                           
+            </div>
+                     {{else}}
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Tus Facturas</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Nro.</th> 
+                                            <th class="text-center">Código Pedido</th>                    
+                                            <th class="text-center">Fecha de Emisión</th>
+                                            <th class="text-center">Total ($)</th>
+                                            <th class="text-center">Más Detalles</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each facturas}}
+                                        <tr>
+                                            <th class="text-center">{{this.id_fac}}</th>
+                                            <th class="text-center">{{this.cod_pedido}}</th>
+                                            <th class="text-center">{{this.fecha_fac}}</th>
+                                            <th class="text-center">{{this.total}}</th>
+                                            <th class="text-center"><form action="/tableFacturas" method="post"><input type="text" name="id" value="{{this.id_fac}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-plus-circle"></i></button></form></th>
+                                        </tr>
+                                        {{/each}}
+                                                                              
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                     {{/if}}                    
+
+            </div>
+            </div>
+
+            
+        {{> footer}}   
+        </div>
+    </div>
+
+    {{> modalSalir}}   
+{{#if resumen}}    
+<!-- Bootstrap core JavaScript-->
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="assets/js/sb-admin-2.min.js"></script>
+ {{else}}
+ {{> scripts}} 
+{{/if}}   
+</body>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{#if alert}}
+        <script>
+        Swal.fire({
+            title: '{{alertTitle}}',
+            text: '{{alertMessage}}',
+            icon: '{{icon}}',
+            showConfirmButton: '{{showConfirmButton}}',
+            timer: '{{timer}}'
+        }).then(()=>{
+            window.location = '/{{ruta}}'
+        })
+    </script>
+    {{/if}}
+</html>
+
