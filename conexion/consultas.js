@@ -297,7 +297,7 @@ const buscarPorPedido = async(codigo) => {
 
 const buscarPorPedidoSS = async(codigo) => {
     try {
-        const res = await pool.query(`select pr.nombre_prod, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf 
+        const res = await pool.query(`select pr.nombre_prod, ped.fecha_entrega, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf 
         from producto as pr, pedido as ped, cliente as cl
         where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli and ped.cod_ped = '${codigo}'`);
         return res.rows;
@@ -476,6 +476,36 @@ const getCodPedidosCliente = async(cedula) => {
     }
 }
 
+const getFacturaCliente = async(codigo) => {
+    try {
+        const res = await pool.query(`select id_fac, fecha_fac,total,cod_pedido from factura where cedula_cli = '${codigo}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const getFactura = async(codigo) => {
+    try {
+        const res = await pool.query(`select id_fac, fecha_fac,total,cod_pedido from factura`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const getResumenFactura = async(codigo) => {
+    try {
+        const res = await pool.query(`select * from factura where id_fac = '${codigo}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     getUsers,
@@ -515,5 +545,8 @@ module.exports = {
     updateCli,
     authCli,
     pedidosPorCliente,
-    getCodPedidosCliente
+    getCodPedidosCliente,
+    getFactura,
+    getFacturaCliente,
+    getResumenFactura
 }
