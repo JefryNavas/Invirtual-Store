@@ -9,7 +9,10 @@ const path = require("path");
 const mimeTypes = require("mime-types");
 const date = require('date-and-time');
 const moment = require('moment');
+const { getCluster, fechaActual, shuffle } = require('./controlador/control');
+const fetch = require('node-fetch');
 const {
+    getPedidosActual,
     getUsers,
     insertUser,
     deleteUser,
@@ -51,7 +54,9 @@ const {
     getFactura,
     getFacturaCliente,
     getResumenFactura,
-    updateEstadoConductor
+    updateEstadoConductor,
+    getAllRepartidores,
+    updateConductor
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -1111,13 +1116,17 @@ app.get('/tableNoEntregados', async(req, res) => {
     if (req.session.loggedinAdmin) {
         let user = req.session.user;
         let codped = await getCodPedidosSS();
+        let Repartidores = await getAllRepartidores();
 
+        let repartidores = Repartidores.length;
         res.render('tableNoEntregados', {
             login: true,
             titulo: 'Por Entregar',
             tipo: user.tipo,
             name: user.nombre,
-            codped
+            codped,
+            repartidores,
+            loading: false
         });
     } else {
         res.redirect('/')
@@ -1533,6 +1542,65 @@ app.post('/seguimiento', async(req, res) => {
     }
 });
 
+
+app.post('/repartirPedidos', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const cluster = req.body.repartidores;
+        let data = await getCluster(cluster);
+        if (data.Repartidores.estado) {
+            let repartidores = await getAllRepartidores();
+            let id_empleados = []
+            for (const i in repartidores) {
+                id_empleados.push(repartidores[i].id_empleado);
+            }
+            //Aleatorizar el vector
+            shuffle(id_empleados);
+
+            let datos = data.Repartidores.data;
+            for (const i in id_empleados) {
+                for (const k in datos) {
+                    if (datos[k].Repartidor == i) {
+                        datos[k].Repartidor = id_empleados[i];
+                    }
+                }
+            }
+            if (datos) {
+                if (await updateConductor(datos)) {
+                    res.render('tableNoEntregados', {
+                        loading: true,
+                        login: true,
+                        name: user.nombre,
+                        tipo: user.tipo,
+                        alert: true,
+                        alertTitle: 'Repartidores Asignados Correctamente',
+                        icon: 'success',
+                        timer: 1500,
+                        ruta: 'tableNoEntregados'
+                    });
+                }
+            }
+        } else {
+            res.render('tableNoEntregados', {
+                loading: true,
+                login: true,
+                name: user.nombre,
+                tipo: user.tipo,
+                alert: true,
+                alertTitle: data.Repartidores.message,
+                icon: 'error',
+                timer: 1500,
+                ruta: 'tableNoEntregados'
+            });
+        }
+
+
+
+
+    }
+
+
+});
 
 app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");

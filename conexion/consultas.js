@@ -1,5 +1,5 @@
 const { pool } = require("./conexion")
-
+const { fechaActual } = require('../controlador/control');
 const getUsers = async() => {
     try {
         const res = await pool.query('select id_empleado,empleado.id_tipo,nombre_tipo,nombre,email,password from empleado,tipo_empleado where empleado.id_tipo = tipo_empleado.id_tipo');
@@ -519,9 +519,43 @@ const updateEstadoConductor = async(codigo_ped) => {
         return error.message;
     }
 }
+const getPedidosActual = async() => {
+    try {
+        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado from pedido as pe where pe.fecha_entrega = '${fechaActual()}' and pe.estado = 'Pedido Registrado' group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+const getAllRepartidores = async() => {
+    try {
+        const res = await pool.query(`select * from empleado where id_tipo = 3`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+const updateConductor = async(data) => {
+    let res;
+    try {
+        for (const i in data) {
+            const consulta = `update pedido set estado = 'Conductor Asignado',conductor = '${data[i].Repartidor}' where cod_ped = '${data[i].cod_pedido}'`;
+            res = await pool.query(consulta);
+        }
+
+        return true;
+
+    } catch (error) {
+        return error.message;
+    }
+}
 
 
 module.exports = {
+    updateConductor,
+    getAllRepartidores,
     getUsers,
     insertUser,
     deleteUser,
@@ -563,5 +597,6 @@ module.exports = {
     getFactura,
     getFacturaCliente,
     getResumenFactura,
-    updateEstadoConductor
+    updateEstadoConductor,
+    getPedidosActual
 }

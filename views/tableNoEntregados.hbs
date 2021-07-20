@@ -1,4 +1,5 @@
 {{> header }}
+
 <body id="page-top">
     <div id="wrapper">
         {{> sidebarAdmin}}
@@ -6,12 +7,12 @@
             <div id="content">
                 {{> topbar}}
                 <div class="container-fluid">
-                <!-- Page Heading -->
+                    <!-- Page Heading -->
                     <!-- DataTales Example -->
-                     {{#if resumen}}
-                     <h5 class="m-0 font-weight-bold text-primary">Cliente: {{cli}}</h5>
-                     <h5 class="m-0 font-weight-bold text-primary">Teléfono: {{tel}}</h5>
-                        <div class="card shadow mb-4">
+                    {{#if resumen}}
+                    <h5 class="m-0 font-weight-bold text-primary">Cliente: {{cli}}</h5>
+                    <h5 class="m-0 font-weight-bold text-primary">Teléfono: {{tel}}</h5>
+                    <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido: {{codigo}} </h6>
                         </div>
@@ -20,10 +21,10 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Producto</th>                    
+                                            <th class="text-center">Producto</th>
                                             <th class="text-center">Cantidad</th>
                                             <th class="text-center">Total Producto</th>
-                                            
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -34,7 +35,7 @@
                                             <th class="text-center">{{this.total}}</th>
                                         </tr>
                                         {{/each}}
-                                                                              
+
                                     </tbody>
                                 </table>
                             </div>
@@ -44,7 +45,27 @@
 
 
 
-                     {{else}}
+                    {{else}}
+                    
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Repartir Pedidos</h6>
+                        </div>
+                        <div class="card-body">
+                            <form action="/repartirPedidos" method="post">
+                                <input type="number" style="width:200px" name="repartidores" placeholder="Número de repartidores" min="1" max="{{repartidores}}" required>
+                                <button type="submit" class="btn btn-primary btn-sm bg-gradient-primary">Repartir</button>
+                            </form>
+                        </div>
+                    </div>
+                    {{#if loading}}
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+
+                    {{else}}
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Pedidos Por Entregar</h6>
@@ -54,7 +75,7 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Código Pedido</th>                    
+                                            <th class="text-center">Código Pedido</th>
                                             <th class="text-center">Fecha de Entrega</th>
                                             <th class="text-center">Estado</th>
                                             <th class="text-center">Detalles</th>
@@ -63,39 +84,35 @@
                                     <tbody>
                                         {{#each codped}}
                                         <tr>
-                                            {{#if (or
-                                            (eq this.estado "No entregado")  
-                                            (eq this.estado "Pedido Registrado")
-                                            (eq this.estado "Conductor Asignado")
-                                            (eq this.estado "Conductor en Camino")
-                                            )
-
-                                            }}
+                                            {{#if (or (eq this.estado "No entregado") (eq this.estado "Pedido Registrado") (eq this.estado "Conductor Asignado") (eq this.estado "Conductor en Camino") ) }}
                                             <th class="text-center">{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.estado}}</th>
-                                            <th class="text-center"><form action="/tableNoEntregados" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th>
-                                            {{/if}}  
+                                            <th class="text-center">
+                                                <form action="/tableNoEntregados" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form>
+                                            </th>
+                                            {{/if}}
                                         </tr>
                                         {{/each}}
-                                                                              
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                     {{/if}}                    
+                    {{/if}}
+                    
+                    
+                    {{/if}}
 
+                </div>
             </div>
-            </div>
-
-            
-        {{> footer}}   
+            {{> footer}}
         </div>
     </div>
 
-    {{> modalSalir}}   
-    
+    {{> modalSalir}}
+
     <!-- Bootstrap core JavaScript-->
     <script src="assets/vendor/jquery/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -107,18 +124,18 @@
 
 </body>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{#if alert}}
-        <script>
-        Swal.fire({
-            title: '{{alertTitle}}',
-            text: '{{alertMessage}}',
-            icon: '{{icon}}',
-            showConfirmButton: '{{showConfirmButton}}',
-            timer: '{{timer}}'
-        }).then(()=>{
-            window.location = '/{{ruta}}'
-        })
-    </script>
-    {{/if}}
-</html>
+{{#if alert}}
+<script>
+    Swal.fire({
+        title: '{{alertTitle}}',
+        text: '{{alertMessage}}',
+        icon: '{{icon}}',
+        showConfirmButton: '{{showConfirmButton}}',
+        timer: '{{timer}}'
+    }).then(() => {
+        window.location = '/{{ruta}}'
+    })
+</script>
+{{/if}}
 
+</html>
