@@ -56,7 +56,10 @@ const {
     getResumenFactura,
     updateEstadoConductor,
     getAllRepartidores,
-    updateConductor
+    updateConductor,
+    getCodPedidosSSRepartidor,
+    getDatosConductor,
+    getNoEntregados
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -792,13 +795,14 @@ app.get('/factura', function(req, res) {
 app.get('/listaPedidos', async(req, res) => {
     if (req.session.loggedinRepartidor) {
         let user = req.session.user;
-        let codped = await getCodPedidosSS();
-
+        let id = user.id
+        let codped = await getCodPedidosSSRepartidor(id);
         res.render('listaPedidos', {
             login: true,
             titulo: 'Pedidos',
             tipo: user.tipo,
             name: user.nombre,
+            id,
             codped
         });
     } else {
@@ -826,6 +830,7 @@ app.post('/listaPedidos', async(req, res) => {
             resumen,
             cli: resumen[0].nombre_cli,
             tel: resumen[0].tlf,
+            estado: resumen[0].estado,
             a_pagar
         });
     } else {
@@ -1115,17 +1120,31 @@ app.post('/tablePendientes', async(req, res) => {
 app.get('/tableNoEntregados', async(req, res) => {
     if (req.session.loggedinAdmin) {
         let user = req.session.user;
-        let codped = await getCodPedidosSS();
+        let codped = await getNoEntregados();
         let Repartidores = await getAllRepartidores();
-
+        var localTime = moment().format('YYYY-MM-DD');
+        let pedidosHoy = []
+        let pedidosDemas = []
+        codped.forEach(element => {
+            if (element.fecha_entrega == localTime) {
+                pedidosHoy.push(element)
+            } else {
+                pedidosDemas.push(element)
+            }
+        });
         let repartidores = Repartidores.length;
+        console.log(codped[0].fecha_entrega);
+        console.log(localTime);
         res.render('tableNoEntregados', {
             login: true,
             titulo: 'Por Entregar',
             tipo: user.tipo,
             name: user.nombre,
             codped,
+            pedidosHoy,
+            pedidosDemas,
             repartidores,
+            localTime,
             loading: false
         });
     } else {
@@ -1524,10 +1543,13 @@ app.post('/seguimiento', async(req, res) => {
         let user = req.session.user;
         const codigo = req.body.id;
         let resumen = await buscarPorPedidoSS(codigo);
+        let cond = resumen[0].conductor
+        let datoscond = await getDatosConductor(cond)
         let a_pagar = 0
         resumen.forEach(element => {
             a_pagar += element.total
         });
+        console.log(cond);
         res.render('seguimiento', {
             login: true,
             titulo: 'Seguimiento',
@@ -1535,6 +1557,9 @@ app.post('/seguimiento', async(req, res) => {
             name: user.nombre,
             codigo,
             fecha: resumen[0].fecha_entrega,
+            estado: resumen[0].estado,
+            ncond: datoscond[0].nombre,
+            placa: datoscond[0].placa,
             a_pagar
         });
     } else {

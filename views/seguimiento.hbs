@@ -25,12 +25,44 @@
         </div> <!-- Add class 'active' to progress -->
         <div class="row d-flex justify-content-center">
             <div class="col-12">
+                {{#if (eq estado "Pedido Registrado")}}
+                <ul id="progressbar" class="text-center">
+                    <li class="active step0"></li>
+                    <li class="step0"></li>
+                    <li class="step0"></li>
+                    <li class="step0"></li>
+                </ul>
+                {{/if}}
+                {{#if (eq estado "Conductor Asignado")}}
+                <ul id="progressbar" class="text-center">
+                    <li class="active step0"></li>
+                    <li class="active step0"></li>
+                    <li class="step0"></li>
+                    <li class="step0"></li>
+                </ul>
+                {{/if}}
+                {{#if (eq estado "Conductor en Camino")}}
+                <ul id="progressbar" class="text-center">
+                    <li class="active step0"></li>
+                    <li class="active step0"></li>
+                    <li class="active step0"></li>
+                    <li class="step0"></li>
+                </ul>
+                {{/if}}
+                {{#if 
+                    (or
+                    (eq this.estado "Entregado-Cancelado")
+                    (eq this.estado "Entregado-Pago Parcial") 
+                    )
+                }}
                 <ul id="progressbar" class="text-center">
                     <li class="active step0"></li>
                     <li class="active step0"></li>
                     <li class="active step0"></li>
                     <li class="active step0"></li>
                 </ul>
+                {{/if}}
+                
             </div>
         </div>
         <div class="row justify-content-between top">
@@ -54,10 +86,15 @@
                     <p class="font-weight-bold">Orden<br>Arribada</p>
                 </div>
             </div>
+            {{#if (ne estado "Pedido Registrado")}}
             <div class="d-flex">
-                <h3>Repartidor Asignado: <span class="text-primary font-weight-bold">#Y34XDHR</span></h3>
-                <h3>Placa: <span class="text-primary font-weight-bold">#Y34XDHR</span></h3>
+                <h3>Repartidor Asignado: <span class="text-primary font-weight-bold">{{ncond}}</span></h3> &nbsp;&nbsp;
+                <h3>Placa: <span class="text-primary font-weight-bold">{{placa}}</span></h3>
             </div>
+            {{else}}
+            <div class="d-flex">
+            </div>
+            {{/if}}
         </div>
     </div>
 

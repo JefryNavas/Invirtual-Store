@@ -39,6 +39,7 @@
                         </div>
                     </div>
                      {{else}}
+                     
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Tu lista de Pedidos</h6>
@@ -51,16 +52,18 @@
                                             <th class="text-center">Código Pedido</th>                    
                                             <th class="text-center">Fecha de Entrega</th>
                                             <th class="text-center">Dirección</th>
+                                            <th class="text-center">Estado</th>
                                             <th class="text-center">Detalles</th>
                                             <th class="text-center">Sigue tu pedido</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {{#each pedidos}}                                        
+                                        {{#each pedidos}}                                   
                                         <tr>
                                             <th class="text-center">{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
+                                            <th class="text-center">{{this.estado}} </th>
                                             <th class="text-center"><form action="/tusPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th>
                                             <th class="text-center"><form action="/seguimiento" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-truck"></i></button></form></th>
                                         </tr>

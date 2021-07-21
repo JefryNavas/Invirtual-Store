@@ -12,10 +12,17 @@
                      <h3 class="m-0 font-weight-bold text-primary">Cliente: {{cli}}</h3>
                      <h3 class="m-0 font-weight-bold text-primary">Teléfono: {{tel}}</h3>
                         <div class="card shadow mb-4">
+                        {{#if (eq estado "Conductor en Camino")}}  
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido: {{codigo}} </h6>
+                            <h6 class="m-0 font-weight-bold text-primary">La entrega del pedido ya ha sido iniciada.. </h6> 
+                        </div>
+                        {{else}}
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Detalles del Pedido: {{codigo}} </h6>
                             <h6 class="m-0 font-weight-bold text-primary">Da click a continuación para iniciar el pedido: <button class="btn btn-primary btn-circle"><a  data-toggle="modal" data-target="#exampleModal"><i class="fas fa-stopwatch"></i> </a></button> </h6> 
                         </div>
+                        {{/if}}
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -39,14 +46,12 @@
                                 </table>
                             </div>
                             <h5 class="m-0 font-weight-bold text-primary">Total Pedido: ${{a_pagar}}</h5>
-                            <h5 class="m-0 font-weight-bold text-primary"> Registrar Pago: </h5>
-                            <form action="/pagos" method="post"><input type="text" name="id" value="{{codigo}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form>
                         </div>
                     </div>
                      {{else}}
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Lista de Pedidos</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Lista de Pedidos (Los pedidos iniciados se verán en color verde)</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -63,17 +68,28 @@
                                     <tbody>
                                         {{#each codped}}                                        
                                         <tr>
-                                        {{#if (or
+                                        {{#if 
+                                            (or
                                             (eq this.estado "No entregado")  
                                             (eq this.estado "Pedido Registrado")
                                             (eq this.estado "Conductor Asignado")
+                                            (eq this.estado "Conductor en Camino") 
                                             )
                                             }}
-                                            <th class="text-center">{{this.cod_ped}}</th>
+                                            {{#if (eq this.estado "Conductor en Camino") }}
+                                            <th class="text-center" style="background-color:greenyellow;">{{this.cod_ped}}</th>
+                                            <th class="text-center" style="background-color:greenyellow;">{{this.fecha_entrega}}</th>
+                                            <th class="text-center" style="background-color:greenyellow;">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
+                                            <th class="text-center" style="background-color:greenyellow;"><form action="/listaPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th> 
+                                            <th class="text-center" style="background-color:greenyellow;"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
+                                            {{else}}
+                                            <th class="text-center"  >{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
                                             <th class="text-center"><form action="/listaPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th> 
                                             <th class="text-center"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
+
+                                            {{/if}} 
                                         {{/if}} 
                                         </tr>
                                         {{/each}}

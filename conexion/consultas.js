@@ -188,7 +188,7 @@ const getCodPedidos = async() => {
 
 const getCodPedidosSS = async() => {
     try {
-        const res = await pool.query('select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado from pedido as pe  group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado');
+        const res = await pool.query('select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado, pe.conductor from pedido as pe  group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pe.conductor');
         return res.rows;
 
     } catch (error) {
@@ -297,7 +297,7 @@ const buscarPorPedido = async(codigo) => {
 
 const buscarPorPedidoSS = async(codigo) => {
     try {
-        const res = await pool.query(`select pr.nombre_prod, ped.fecha_entrega, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf 
+        const res = await pool.query(`select pr.nombre_prod, ped.fecha_entrega, ped.cantidad, ped.total, cl.nombre_cli, cl.cedula_cli, cl.tlf, ped.conductor,ped.estado
         from producto as pr, pedido as ped, cliente as cl
         where ped.cod_prod = pr.cod_prod and ped.cedula_cli = cl.cedula_cli and ped.cod_ped = '${codigo}'`);
         return res.rows;
@@ -454,9 +454,9 @@ const updateCli = async(user, pass) => {
 
 const pedidosPorCliente = async(cedula) => {
     try {
-        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.cedula_cli, pe.calle_principal, pe.calle_secundaria
+        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.cedula_cli, pe.calle_principal, pe.calle_secundaria, pe.estado
         from pedido as pe where pe.cedula_cli = '${cedula}'
-        group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pe.cedula_cli`);
+        group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pe.cedula_cli, pe.estado`);
         return res.rows;
 
     } catch (error) {
@@ -552,6 +552,41 @@ const updateConductor = async(data) => {
     }
 }
 
+const getCodPedidosSSRepartidor = async(id) => {
+    try {
+        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado, pe.conductor 
+        from pedido as pe  where pe.conductor = ${id}
+        group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pe.conductor
+        `);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const getDatosConductor = async(id_cond) => {
+    try {
+        const res = await pool.query(`select * from empleado where id_empleado = '${id_cond}'`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const getNoEntregados = async() => {
+    try {
+        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado, pe.conductor from pedido as pe 
+        where pe.estado = 'Pedido Registrado' or pe.estado = 'No Entregado'
+        group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pe.conductor`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     updateConductor,
@@ -598,5 +633,8 @@ module.exports = {
     getFacturaCliente,
     getResumenFactura,
     updateEstadoConductor,
-    getPedidosActual
+    getPedidosActual,
+    getCodPedidosSSRepartidor,
+    getDatosConductor,
+    getNoEntregados
 }
