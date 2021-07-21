@@ -587,6 +587,19 @@ const getNoEntregados = async() => {
     }
 }
 
+const getAsigandos = async() => {
+    try {
+        const res = await pool.query(`select pe.cod_ped, pe.fecha_entrega, pe.calle_principal,pe.calle_secundaria, pe.estado, pe.conductor,emp.nombre
+        from pedido as pe, empleado as emp
+        where emp.id_empleado = pe.conductor
+        group by pe.cod_ped, pe.fecha_entrega, pe.calle_principal, pe.calle_secundaria, pe.estado, pe.conductor,emp.nombre`);
+        return res.rows;
+
+    } catch (error) {
+        return error.message;
+    }
+}
+
 
 module.exports = {
     updateConductor,
@@ -636,5 +649,6 @@ module.exports = {
     getPedidosActual,
     getCodPedidosSSRepartidor,
     getDatosConductor,
-    getNoEntregados
+    getNoEntregados,
+    getAsigandos
 }

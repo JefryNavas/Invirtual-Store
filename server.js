@@ -59,7 +59,8 @@ const {
     updateConductor,
     getCodPedidosSSRepartidor,
     getDatosConductor,
-    getNoEntregados
+    getNoEntregados,
+    getAsigandos
 } = require("./conexion/consultas");
 const { stringify } = require('querystring');
 // Helpers
@@ -1133,8 +1134,6 @@ app.get('/tableNoEntregados', async(req, res) => {
             }
         });
         let repartidores = Repartidores.length;
-        console.log(codped[0].fecha_entrega);
-        console.log(localTime);
         res.render('tableNoEntregados', {
             login: true,
             titulo: 'Por Entregar',
@@ -1618,13 +1617,54 @@ app.post('/repartirPedidos', async(req, res) => {
                 ruta: 'tableNoEntregados'
             });
         }
-
-
-
-
     }
+});
 
 
+app.get('/tableAsignados', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        let codped = await getAsigandos();
+
+        res.render('tableAsignados', {
+            login: true,
+            titulo: 'Asignados',
+            tipo: user.tipo,
+            name: user.nombre,
+            codped
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+
+// Listar Pedidos Individualmente
+app.post('/tableAsignados', async(req, res) => {
+    if (req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        //let codped = await getCodPedidos();
+        let resumen = await buscarPorPedidoSS(codigo);
+        let a_pagar = 0
+        resumen.forEach(element => {
+            a_pagar += element.total
+        });
+        let saldo = resumen[0].saldo
+        res.render('tableAsignados', {
+            login: true,
+            titulo: 'Asignados',
+            tipo: user.tipo,
+            name: user.nombre,
+            codigo,
+            resumen,
+            cli: resumen[0].nombre_cli,
+            tel: resumen[0].tlf,
+            a_pagar,
+            saldo
+        });
+    } else {
+        res.redirect('/')
+    }
 });
 
 app.listen(port, () => {
