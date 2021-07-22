@@ -50,6 +50,19 @@ const editUser = async(id, nombre, rol, email, password) => {
         return error.message;
     }
 }
+const editProd = async(id, nombre, material, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
+    try {
+        const consulta = `update producto set nombre_prod = '${nombre}', material = '${material}', color = '${color}', stock = '${stock}', precio_mercado = '${precioMer}', precio_proveedor = '${precioProv}',cm = '${cm}',talla = '${talla}', peso = '${peso}', origen = '${origen}' where cod_prod = ${id}`
+        console.log(consulta);
+        const res = await pool.query(consulta);
+        if (res.rowCount == 1) {
+            return "Producto Modificado Correctamente";
+        } else
+            return "No existe el Producto";
+    } catch (error) {
+        return error.message;
+    }
+}
 
 const authUser = async(email, pass) => {
     try {
@@ -244,7 +257,7 @@ const getProductos = async() => {
 
 const getProductosTabla = async() => {
     try {
-        const res = await pool.query('select p.cod_prod, p.nombre_prod, cat.categoria, pr.nombre_prov,p.color, p.stock, p.precio_mercado, p.precio_proveedor from producto as p, categoria_producto as cat, proveedor as pr where p.id_cat = cat.id_cat and pr.cod_prov = p.cod_prov');
+        const res = await pool.query('select p.cod_prod, p.cod_prod, p.nombre_prod, cat.categoria, pr.nombre_prov,p.color, p.stock, p.precio_mercado, p.precio_proveedor from producto as p, categoria_producto as cat, proveedor as pr where p.id_cat = cat.id_cat and pr.cod_prov = p.cod_prov');
         return res.rows;
 
     } catch (error) {
@@ -650,5 +663,6 @@ module.exports = {
     getCodPedidosSSRepartidor,
     getDatosConductor,
     getNoEntregados,
-    getAsigandos
+    getAsigandos,
+    editProd
 }

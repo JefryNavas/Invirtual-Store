@@ -81,14 +81,14 @@
                                             <th class="text-center" style="background-color:greenyellow;">{{this.fecha_entrega}}</th>
                                             <th class="text-center" style="background-color:greenyellow;">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
                                             <th class="text-center" style="background-color:greenyellow;"><form action="/listaPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th> 
-                                            <th class="text-center" style="background-color:greenyellow;"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
+                                            <th class="text-center" style="background-color:greenyellow;"><form action="/pagoss" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
                                             {{else}}
                                             <th class="text-center"  >{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.calle_principal}} y {{this.calle_secundaria}} </th>
                                             <th class="text-center"><form action="/listaPedidos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form></th> 
-                                            <th class="text-center"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th>
-
+                                            {{!-- <th class="text-center"><form action="/pagos" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-money-bill-wave"></i></button></form></th> --}}
+                                            <th class="text-center">Debe inicar el pedido</th>
                                             {{/if}} 
                                         {{/if}} 
                                         </tr>

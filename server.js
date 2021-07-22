@@ -12,6 +12,7 @@ const moment = require('moment');
 const { getCluster, fechaActual, shuffle } = require('./controlador/control');
 const fetch = require('node-fetch');
 const {
+    editProd,
     getPedidosActual,
     getUsers,
     insertUser,
@@ -478,7 +479,7 @@ app.get('/tableClientes', async(req, res) => {
 
 // Tabla Productos
 app.get('/tableProductos', async(req, res) => {
-    if (req.session.loggedinAdmin) {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
         let user = req.session.user;
         let product = await getProductosTabla();
 
@@ -851,6 +852,27 @@ app.post('/pagos', async(req, res) => {
             resumen.forEach(element => {
                 a_pagar += element.total
             });
+            res.render('listaPedidos', {
+                alert: true,
+                login: true,
+                titulo: 'listado',
+                timer: 0,
+                tipo: user.tipo,
+                name: user.nombre,
+                codigo,
+                resumen,
+                a_pagar,
+                actualizar,
+                ruta: 'listaPedidos'
+            });
+        } else {
+
+            let resumen = await buscarPorPedido(codigo);
+            let a_pagar = 0
+            resumen.forEach(element => {
+                a_pagar += element.total
+            });
+            let saldo = resumen[0].saldo
             res.render('pagos', {
                 login: true,
                 titulo: 'Pagar',
@@ -859,7 +881,35 @@ app.post('/pagos', async(req, res) => {
                 codigo,
                 resumen,
                 a_pagar,
-                actualizar
+                saldo
+            });
+        }
+    } else {
+        res.redirect('/')
+    }
+});
+
+app.post('/pagoss', async(req, res) => {
+    if (req.session.loggedinRepartidor || req.session.loggedinAdmin) {
+        let user = req.session.user;
+        const codigo = req.body.id;
+        let actualizar = await updateEstadoConductor(codigo);
+        if (user.tipo == 3) {
+            let resumen = await buscarPorPedidoSS(codigo);
+            let a_pagar = 0
+            resumen.forEach(element => {
+                a_pagar += element.total
+            });
+            res.render('pagos', {
+                login: true,
+                titulo: 'Pagos',
+                timer: 0,
+                tipo: user.tipo,
+                name: user.nombre,
+                codigo,
+                resumen,
+                a_pagar,
+                actualizar,
             });
         } else {
 
@@ -1666,7 +1716,53 @@ app.post('/tableAsignados', async(req, res) => {
         res.redirect('/')
     }
 });
+app.post('/tableProductos', async(req, res) => {
+    if (req.session.loggedinAdmin || req.session.loggedinEmpleado) {
+        let user = req.session.user;
+        const idProd = req.body.id;
+        let products = await getProductos();
+        let producto = products.find(obj => obj.cod_prod == idProd);
+        res.render('tableProductos', {
+            login: true,
+            titulo: 'Tablas',
+            tipo: user.tipo,
+            name: user.nombre,
+            producto
+        });
+    } else {
+        res.redirect('/')
+    }
+});
+app.post('/editProd', async(req, res) => {
+    let user = req.session.user;
+    const producto = {
+        codigo: req.body.id,
+        nombre: req.body.nombre,
+        material: req.body.material,
+        peso: req.body.peso,
+        cm: req.body.cm,
+        color: req.body.color,
+        talla: req.body.talla,
+        origen: req.body.origen,
+        stock: req.body.stock,
+        precioMer: req.body.precioMer,
+        precioProv: req.body.precioProv
+    };
 
+    const msg = await editProd(producto.codigo, producto.nombre,
+        producto.material, producto.peso, producto.cm, producto.color,
+        producto.talla, producto.origen, producto.stock, producto.precioMer, producto.precioProv);
+
+    res.render('tableProductos', {
+        tipo: user.tipo,
+        alert: true,
+        alertTitle: msg,
+        icon: 'success',
+        timer: 1700,
+        ruta: 'tableProductos'
+    });
+
+})
 app.listen(port, () => {
     console.log("Servidor Iniciado, escuchando el puerto 3000");
 });

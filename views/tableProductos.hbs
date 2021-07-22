@@ -1,12 +1,93 @@
 {{> header }}
+
 <body id="page-top">
     <div id="wrapper">
-        {{> sidebarAdmin}}
+        {{#ifEquals tipo "2"}}
+            {{> sidebarEmpleado}}
+        {{/ifEquals}}
+        {{#ifEquals tipo "1"}}
+            {{> sidebarAdmin}}
+        {{/ifEquals}}
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 {{> topbar}}
                 <div class="container-fluid">
-                <!-- Page Heading -->
+                    <!-- Page Heading -->
+                    {{#if producto}}
+                    <h1 class="h3 mb-4 text-gray-800">Modificar</h1>
+                    <form class="user text-center" action="/editProd" method="POST">
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="text" value="{{producto.cod_prod}}" name="id" style="display: none;">
+                                <div class="form-group">
+                                    Nombre: <input type="text" class="form-control" placeholder="Nombre del Producto..." value="{{producto.nombre_prod}}" name="nombre"required>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr> Detalles Generales
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-6">
+                                <div class="form-group">
+                                    Material:
+                                    <select class="form-control" style="border-radius: 10rem" name="material">
+                                <option selected value="{{producto.material}}">{{producto.material}}</option>
+                                <option value="Plastico">Plástico</option>
+                                <option value="Algodon">Algodón</option>
+                                <option value="Polyester">Polyester</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                                </div>
+                                <div class="form-group">
+                                    Peso: <input type="number" class="form-control" placeholder="Peso en kg... (Opcional)" value="{{producto.peso}}" name="peso" value="">
+                                </div>
+                                <div class="form-group">
+                                    Tamaño: <input type="number" class="form-control" placeholder="Tamaño en cm...(Opcional)" value="{{producto.cm}}" name="cm">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-lg-6">
+                                <div class="form-group">
+                                    Color: <input type="text" class="form-control" placeholder="Color..." name="color" value="{{producto.color}}" required>
+                                </div>
+                                <div class="form-group">
+                                    Talla: <input type="text" class="form-control" placeholder="Talla (Opcional)..." value="{{producto.talla}}" name="talla" value="">
+                                </div>
+                                <div class="form-group">
+                                    Origen: <select class="form-control" style="border-radius: 10rem" name="origen" required>
+                                <option selected value="{{producto.origen}}">{{producto.origen}}</option>
+                                <option>Estados Unidos</option>
+                                <option>Ecuador</option>
+                                <option>China</option>
+                            </select>
+                                </div>
+                                <div class="form-group">
+                                    Stock: <input type="number" class="form-control" placeholder="N° Stock..." value="{{producto.stock}}" name="stock" required min="1">
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-12 col-lg-6">
+                                    Precio Mercado:<input type="number" class="form-control" placeholder="Precio Mercado..." value="{{producto.precio_mercado}}" name="precioMer" required>
+                                    <br>
+                                </div>
+                                <br>
+                                <div class="col-sm-12 col-lg-6">
+                                    Precio Proveedor: <input type="number" class="form-control" placeholder="Precio Proveedor..." value="{{producto.precio_proveedor}}" name="precioProv" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="form-group ">
+                            <input type="submit" class="btn btn-primary btn-lg bg-gradient-primary" value="REGISTRAR">
+                        </div>
+
+                    </form>
+                    {{else}}
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -17,7 +98,7 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">Nombre</th>                    
+                                            <th class="text-center">Nombre</th>
                                             <th class="text-center">Categoría</th>
                                             <th class="text-center">Proveedor</th>
                                             <th class="text-center">Color</th>
@@ -38,41 +119,44 @@
                                             <th class="text-center">{{this.stock}}</th>
                                             <th class="text-center">{{this.precio_mercado}}</th>
                                             <th class="text-center">{{this.precio_proveedor}}</th>
-                                            <th class="text-center"><a href="/editProd/{{this.cod_prod}}" class="btn btn-primary btn-circle"><i class="fas fa-edit"></a></i></th>
+                                            <th class="text-center">
+                                                <form action="/tableProductos" method="post"><input type="text" name="id" value="{{this.cod_prod}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-edit"></i></button></form>
+                                            </th>
                                             <th class="text-center"><a href="/deleteProd/{{this.cod_prod}}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></th>
                                         </tr>
                                         {{/each}}
-                                                                              
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>          
-            </div>
+                    </div>
+                    {{/if}}
+                </div>
             </div>
 
-            
-        {{> footer}}   
+
+            {{> footer}}
         </div>
     </div>
 
-    {{> modalSalir}}   
-    
-{{> scripts}} 
+    {{> modalSalir}} {{> scripts}}
 
 </body>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{#if alert}}
-        <script>
-        Swal.fire({
-            title: '{{alertTitle}}',
-            text: '{{alertMessage}}',
-            icon: '{{icon}}',
-            showConfirmButton: '{{showConfirmButton}}',
-            timer: '{{timer}}'
-        }).then(()=>{
-            window.location = '/{{ruta}}'
-        })
-    </script>
-    {{/if}}
+
+{{#if alert}}
+<script>
+    Swal.fire({
+        title: '{{alertTitle}}',
+        text: '{{alertMessage}}',
+        icon: '{{icon}}',
+        showConfirmButton: '{{showConfirmButton}}',
+        timer: '{{timer}}'
+    }).then(() => {
+        window.location = '/{{ruta}}'
+    })
+</script>
+{{/if}}
+
 </html>
