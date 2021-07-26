@@ -38,84 +38,86 @@ Si ya lo tienes instaldo pasa al siguiente punto.</p>
 <ol>
 <li>-	Se descarga la versión LTS de la página oficial que reconocerá automáticamente el S.O en el que se esté trabajando:  <a href="https://nodejs.org/es/"> Descargar Node </a>
 <li>Se aceptan los términos de la licencia y se procede a la instalación.</li>
-<li>Una vez instalado para commprobar la correcta instalación se puede crear un pequeño programa en Visual Studio Code con extensión .js y se lo ejecuta en la terminal con el formato: <b>node archivo.js<b> </li>
+<li>Una vez instalado para commprobar la correcta instalación se puede crear un pequeño programa en Visual Studio Code con extensión .js y se lo ejecuta en la terminal con el formato: <b>node server.js<b> </li>
   </ol> 
   
 <br/>
 <h4>Instalación de Node Package Manager NPM</h4>
 <ol>
   <li>Para instalar npm hay que escribir en el terminal del Sistema Operativo o del propio Visual estudio:  «npm install npm@latest -g» y pulsar Intro</li>
-  <li>Teniendo instalado NPM se coloca en el terminal: <<npm init>>, aquí dentro de nuestro proyecto aparecerá un archivo muy importante llamando package.json, mismo que muestra nombre, versión, descripción, autor, el archivo main, y finalmente muestra las dependencias del proyecto, es decir todos los paquetes o módulos que se hayan instalando para el proyecto en cuestión. </li>
+  <li>Teniendo instalado NPM se coloca en el terminal: «npm init», aquí dentro de nuestro proyecto aparecerá un archivo muy importante llamando package.json, mismo que muestra nombre, versión, descripción, autor, el archivo main, y finalmente muestra las dependencias del proyecto, es decir todos los paquetes o módulos que se hayan instalando para el proyecto en cuestión. </li>
   </ol>
   
   <br/>
 <h4>Instalación de Entorno de Flask (Python)</h4>
 <ol>
-  <li>Para instalar npm hay que escribir en el terminal del Sistema Operativo o del propio Visual estudio:  «npm install npm@latest -g» y pulsar Intro</li>
-  <li>Teniendo instalado NPM se coloca en el terminal: <<npm init>>, aquí dentro de nuestro proyecto aparecerá un archivo muy importante llamando package.json, mismo que muestra nombre, versión, descripción, autor, el archivo main, y finalmente muestra las dependencias del proyecto, es decir todos los paquetes o módulos que se hayan instalando para el proyecto en cuestión. </li>
-  </ol>
+  <li>Para instalar flask que es un entorno dentro del lenguaje de Python, para lo cual se necesita contar con cualquier IDE que cuente con el lenguaje Python como <b>Pycharm</b> o <b>Visual Studio Code</b>  </li>
+  <li>Para instalar Flask vamos a utilizar pip. Así que simplemente deberemos de escribir en nuestra línea de comandos lo siguiente: </li>
+</ol>
+  
+```
+pip install Flask
+``` 
+  
+```
+sudo pip install Flask
+```   
 
 ## Despliegue 📦
 <ol>
-  <li>Teniendo instalado NPM  a la persona que quiera trabajar con el código traído desde un repositorio o de manera remota se descargará el código sin las librerías y dependencias del proyecto, pero las instará de forma sencilla mediante el comando de terminal <<npm install>> que instalará todas las dependencias registradas en el archivo package.json</li>
+  <li> Para la instalación de la parte web, y ya teniendo instalado NPM,  a la persona que quiera trabajar con el código traído desde un repositorio o de manera remota se descargará el código sin las librerías y dependencias del proyecto, pero las instará de forma sencilla mediante el comando de terminal «npm install»  que instalará todas las dependencias registradas en el archivo package.json</li>
  </ol>
-  <h5> El programa utiliza la librería npm yargs, que permite que el programa pueda ejecutarse en la terminal al estilo de llamados por línea de comandos de bash </h5>
-  <h5>El programa dispone de dos comandos: </h5
-  <ol>
-    <li> <b>Publicar:</b> Este comando publicará las estadísticas en una página web básica. Se requieren de tres parámetros:
-       <ul>
-         <li>--file -f: Permite establecer el path del archivo CSV que contiene los datos a analizar</li>
-         <li>--country -c: Permite determinar el país a analizar a través de su código ISO 3166 ALPHA-3</li>
-         <li>--year -y: Permite especificar el año para el cual se requiere las estadísticas. Por defecto, 2018.</li>
-      </ul> 
-    </li>
-    <li> <b> Guardar: </b> Este comando almacenará los resultados de las estadísticas en un archivo json. Recibe los mismos parámetros que el comando anterior, y se adiciona la siguiente opción:
-        <ul>
-              <li>--out -o: Establece el nombre del archivo donde se almacenará los resultados</li>
-      </ul>  
-  </li>
-</ol>
-
+  <h5> El programa utiliza la librería express, que permite la conexión de la parte del servidor, con el apartado web, para lograr aplicaciones web conectando tanto el front-end, como en el back-end en JavaScript. </h5>
   <h3> El comando para la ejecución del programa se vería de la siguiente manera: </h3> 
   
   <ul>
-    <li> Para publicar: Tomando ejemplo datos de Ecuador (ECU) en el año 2016 </li>
+    <li> Para ejecutar el entorno web: Parte programada con NodeJS y Handlebars </li>
   </ul>
   
 ```
-node app.js publicar -f "tu_path\.csv" -c "ECU" -y 2016 
+node server.js
 ```
    <ul>
-    <li> Para Guardar: Tomando ejemplo datos de Ecuador (USA) en el año 2019 </li>
+    <li> Para ejecutar el entorno de la API programada en Python y Flask </li>
   </ul> 
   
 ```
-node app.js guardar -f "tu_Path\datos.csv" -c "USA" -y 2019 -o "Datos USA"
+python app.js
 ```
   
 ## Construido con 🛠️
 
   <h5> Librerías NPM </h5>
 
-* [yargs](https://www.npmjs.com/package/yargs) - Ayuda a crear herramientas de línea de comandos interactivas, analizando argumentos y generando una elegante interfaz de usuario.
-* [colors](https://www.npmjs.com/package/colors) - Dar color y estilo la impresiones por consola node.js
-* [neat-csv](https://www.npmjs.com/package/neat-csv) - Analizador CSV rápido
+## Construido con 🛠️
+
+  <h5> Librerías NPM </h5>
+
+* [axios](https://www.npmjs.com/package/axios) -Cliente HTTP basado en promesas para el navegador y node.js, permite traer llamados a una API externa.
+* [bcryptjs](https://www.npmjs.com/package/bcryptjs) - se basa en la interfaz getRandomValues ​​de Web Crypto API para obtener números aleatorios seguros
+* [date-and-time](https://www.npmjs.com/package/date-and-time) - Es  una colección de funciones para manipular la fecha y la hora.
+* [dotenv](https://www.npmjs.com/package/dotenv) - Dotenv es un módulo de dependencia cero que carga variables de entorno desde un .env archivo a process.env. El almacenamiento de la configuración en el entorno por separado del código.
+* [express](https://www.npmjs.com/package/express) - Marco web minimalista, rápido y sin supervisión para nodo, permite la conexión a un servidor.
+* [express-session](https://www.npmjs.com/package/express-session) - Crea un middleware de sesión con el archivo options, y permite navegación de sesiones en el servidor.
+* [fs](https://nodejs.dev/learn/the-nodejs-fs-module) -  proporciona una gran cantidad de funciones muy útiles para acceder e interactuar con el sistema de archivos.
+* [hbs](https://www.npmjs.com/package/hbs) - El uso de hbs como motor de visualización predeterminado requiere solo una línea de código en la configuración de su aplicación, para handlebars.js.
+* [mime-types](https://www.npmjs.com/package/mime-types) - Cree un encabezado de tipo de contenido completo dado un tipo de contenido o una extensión.
+* [moment](https://www.npmjs.com/package/moment) - Una biblioteca de fechas de JavaScript para analizar, validar, manipular y formatear fechas. 
+* [multer](https://www.npmjs.com/package/multer) - Es un middleware de node.js para el manejo multipart/form-data, que se usa principalmente para cargar archivos. Está escrito en la parte superior del ayudante de camarero para una máxima eficiencia.
+* [node-fetch](https://www.npmjs.com/package/node-fetch) - Es  una colección para hacer peticiones a una API y traerlas de manera sencilla.
+* [pg](https://www.npmjs.com/package/pg) - Cliente PostgreSQL sin bloqueo para Node.js. JavaScript puro y enlaces libpq nativos opcionales.
   <h5> Extras </h5>
 * [CSS](https://www.w3schools.com/css/) - Es un lenguaje de diseño gráfico para definir y crear la presentación de un documento estructurado escrito en un lenguaje de marcado.
-
-
-## Versionado 📌
-Se realizó un versionamiente mediante los tags de git, en total se ha lanzado solo una versión con una modificación. 
-<ol>
-  <li> Versión 1.0.0: Contiene La impresión básica por consola y guardado en JSON </li>
-  <li>Versión 1.0.1: Contiene la impresión mejorada por consola, y añadido la impresión de los resultados en un servidor web local </li>
-</ol>  
-  
+* [SCSS](https://sass-lang.com/) - Sass es un metalenguaje de Hojas de Estilo en Cascada (CSS). Es un lenguaje de script en sí mismo. Sass consiste en dos sintaxis. La sintaxis original, llamada indented syntax («sintaxis con sangrado»), que usa la sangría para separar bloques de código y el carácter nueva línea para separar reglas. La sintaxis más reciente, SCSS, usa el formato de bloques como CSS. Este usa llaves para denotar bloques de código y punto y coma (;) para separar las líneas dentro de un bloque. 
   
 
-## Autor ✒️
+  
+## Autores ✒️
 
+* **Amarilis Cueva** - *Estudiante Ingeniería en Ciencias de la Computación* - [Amarilis7616](https://github.com/Amarilis7616)
 * **Edwin Hernández** - *Estudiante Ingeniería en Ciencias de la Computación* - [fonsiher](https://github.com/fonsiher)
+* **Jefry Navas** - *Estudiante Ingeniería en Ciencias de la Computación* - [JefryNavas](https://github.com/JefryNavas)
+* **Joel Yunga** - *Estudiante Ingeniería en Ciencias de la Computación* - [JoelYunga](https://github.com/JoelYunga)
 
 También puedes mirar la lista de todos los [contribuyentes](https://github.com/your/project/contributors) quíenes han participado en este proyecto. 
 
