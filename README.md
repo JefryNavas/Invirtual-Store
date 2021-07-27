@@ -84,10 +84,6 @@ node server.js
 ```
 python app.js
 ```
-  
-## Construido con 🛠️
-
-  <h5> Librerías NPM </h5>
 
 ## Construido con 🛠️
 
