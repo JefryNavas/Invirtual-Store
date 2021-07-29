@@ -111,11 +111,11 @@ python app.js
 ## Autores ✒️
 
 * **Amarilis Cueva** - *Estudiante Ingeniería en Ciencias de la Computación* - [Amarilis7616](https://github.com/Amarilis7616)
-* **Alfonfo Hernández** - *Estudiante Ingeniería en Ciencias de la Computación* - [fonsiher](https://github.com/fonsiher)
+* **Edwin Hernández** - *Estudiante Ingeniería en Ciencias de la Computación* - [fonsiher](https://github.com/fonsiher)
 * **Jefry Navas** - *Estudiante Ingeniería en Ciencias de la Computación* - [JefryNavas](https://github.com/JefryNavas)
-* **Joel Yungan** - *Estudiante Ingeniería en Ciencias de la Computación* - [JoelYunga](https://github.com/JoelYunga)
+* **Joel Yunga** - *Estudiante Ingeniería en Ciencias de la Computación* - [JoelYunga](https://github.com/JoelYunga)
 
-También puedes mirar la lista de todos los [contribuyentes](https://github.com/your/project/contributors) quíenes han participado en este proyecto. 
+También puedes mirar la lista de todos los [contribuyentes](https://github.com/JefryNavas/Proyecto_Integrador_P58/graphs/contributors) quíenes han participado en este proyecto. 
 
 ## Licencia 📄
 
