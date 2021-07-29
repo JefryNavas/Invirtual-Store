@@ -1,6 +1,6 @@
 # Proyecto_Integrador_P58 - Administración de Usuario en Invirtual Store 
 
-Una aplicación que funcionará como un sistema todo en uno, enfocado en la administración del negocio, para solverntar los problemas de venta y registro de inventario que presentan. Se implementará una aplicación web que tendrá su página principal y será de acceso tanto para el administrador, empleados repartidores, y clientes. El administrador podrá gestionar y tener una visión del invetario que tiene, para poder publicarlo o sacarlo de sus publicaciones en redes sociales, podrá ver los pagos pendientes de los clientes y tendrá un registro de las reparticiones hechas por los empleados.  El cliente podrá revisar sus pagos pendientes e información de su pedido en proceso de entrega. Y los repartidores podrán registrar a los clientes, los pagos realizados y así registrar las reparticiones que realizan. 
+Una aplicación que funcionará como un sistema todo en uno, enfocado en la administración del negocio, para solverntar los problemas de venta y registro de inventario que presentan. Se implementará una aplicación web que tendrá su página principal y será de acceso tanto para el administrador, empleados, repartidores, y clientes. El administrador podrá gestionar y tener una visión del invetario que tiene, para poder publicarlo o sacarlo de sus publicaciones en redes sociales, podrá ver los pagos pendientes de los clientes y tendrá un registro de las reparticiones hechas por los empleados.  El cliente podrá revisar sus pagos pendientes e información de su pedido en proceso de entrega. Y los repartidores podrán registrar a los clientes, los pagos realizados y así registrar las reparticiones que realizan. 
 
 
 ### Pre-requisitos 📋
@@ -111,9 +111,9 @@ python app.js
 ## Autores ✒️
 
 * **Amarilis Cueva** - *Estudiante Ingeniería en Ciencias de la Computación* - [Amarilis7616](https://github.com/Amarilis7616)
-* **Edwin Hernández** - *Estudiante Ingeniería en Ciencias de la Computación* - [fonsiher](https://github.com/fonsiher)
+* **Alfonfo Hernández** - *Estudiante Ingeniería en Ciencias de la Computación* - [fonsiher](https://github.com/fonsiher)
 * **Jefry Navas** - *Estudiante Ingeniería en Ciencias de la Computación* - [JefryNavas](https://github.com/JefryNavas)
-* **Joel Yunga** - *Estudiante Ingeniería en Ciencias de la Computación* - [JoelYunga](https://github.com/JoelYunga)
+* **Joel Yungan** - *Estudiante Ingeniería en Ciencias de la Computación* - [JoelYunga](https://github.com/JoelYunga)
 
 También puedes mirar la lista de todos los [contribuyentes](https://github.com/your/project/contributors) quíenes han participado en este proyecto. 
 
