@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 
 const config = {
     // Conexión para la base de datos de Heroku
-    connectionString: 'postgres://kxxlgecbpcpshw:db6f64562de83034c96e962ae82267f74feed602afe73eebcc8895b27badbd94@ec2-54-145-224-156.compute-1.amazonaws.com:5432/dcak7rmvtrl7cp',
+    connectionString: 'postgres://ndpxotvtytvyrb:ccdfce22c8d41c2ea1400795e60696ed4be5f6375d76f047a0724efd799b53aa@ec2-3-225-213-67.compute-1.amazonaws.com:5432/dea2cdulqk98il',
     ssl: { rejectUnauthorized: false }
 
 
