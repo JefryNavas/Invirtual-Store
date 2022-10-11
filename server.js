@@ -1,16 +1,13 @@
 const express = require('express');
 const app = express();
 const hbs = require("hbs");
-const bcryptjs = require("bcryptjs")
 const session = require("express-session")
-const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 const mimeTypes = require("mime-types");
 const date = require('date-and-time');
 const moment = require('moment');
-const { getCluster, fechaActual, shuffle } = require('./controlador/control');
-const fetch = require('node-fetch');
+const { getCluster, shuffle } = require('./controller/control');
 const {
     editProd,
     getPedidosActual,
@@ -62,10 +59,20 @@ const {
     getDatosConductor,
     getNoEntregados,
     getAsigandos
-} = require("./conexion/consultas");
+} = require("./services/consultas");
+
+
+const {
+
+} = require("./services/authService")
+
+
+
+
+
 const { stringify } = require('querystring');
 // Helpers
-require('./hbs/helpers')
+require('./helpers/helpers')
 
 const storage = multer.diskStorage({
 
