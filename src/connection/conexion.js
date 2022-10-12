@@ -9,7 +9,7 @@ const config = {
     // Conexión para la base de datos local
     user: 'postgres',
     host: 'localhost',
-    password: 'sololdu',
+    password: '123',
     database: 'InVirtual'
 };
 const pool = new Pool(config)

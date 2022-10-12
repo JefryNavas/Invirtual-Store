@@ -7,7 +7,7 @@ const path = require("path");
 const mimeTypes = require("mime-types");
 const date = require('date-and-time');
 const moment = require('moment');
-const { getCluster, shuffle } = require('./src/controller/control');
+const { getCluster, shuffle } = require('./src/helpers/cluster');
 
 const {
     authUser,
@@ -79,9 +79,6 @@ const {
     deleteProv
 } = require("./src/services/providerService")
 
-
-
-const { stringify } = require('querystring');
 // Helpers
 require('./src/helpers/helpers')
 
@@ -121,25 +118,9 @@ app.use(session({
 }))
 
 // Rutas de la página web
-app.get('/', function(req, res) {
-    res.render('login', {
-        titulo: 'Login',
-    });
-});
+const routes = require("./src/routes/routes");
+app.use(routes)
 
-app.get('/admin', function(req, res) {
-    if (req.session.loggedinAdmin) {
-        let user = req.session.user;
-        res.render('admin', {
-            login: true,
-            titulo: 'Dashboard',
-            tipo: 'admin',
-            name: user.nombre
-        });
-    } else {
-        res.redirect('/')
-    }
-});
 app.get('/empleado', function(req, res) {
     if (req.session.loggedinEmpleado) {
         let user = req.session.user;

@@ -1,4 +1,4 @@
-const { pool } = require("../../connection/conexion")
+const { pool } = require("../../src/connection/conexion")
 
 const getGeneros = async() => {
     try {
