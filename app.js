@@ -8,65 +8,76 @@ const mimeTypes = require("mime-types");
 const date = require('date-and-time');
 const moment = require('moment');
 const { getCluster, shuffle } = require('./src/controller/control');
+
 const {
-    editProd,
-    getPedidosActual,
-    getUsers,
-    insertUser,
-    deleteUser,
-    editUser,
     authUser,
+    authCli,
     authEmail,
-    getProvedores,
-    insertProv,
-    deleteProv,
+    authEmailCli
+} = require("./src/services/authService")
+
+const {
     getGeneros,
     insertCliente,
     getClientes,
     buscarPorCed,
+    updateCli
+} = require("./src/services/clientService")
+
+const {
+    getUsers,
+    insertUser,
+    deleteUser,
+    editUser,
+    insertGanancias,
+    getGanancias,
+    getRepartidores,
+    getAllRepartidores,
+    updateConductor,
+    getDatosConductor
+} = require("./src/services/employeeService")
+
+const {
+    getCodPedidos,
+    getCodPedidosSS,
+    hacerPedido,
+    buscarPorPedido,
+    buscarPorPedidoSS,
+    updateEstado,
+    getEstadoPed,
+    pedidosPorCliente,
+    getCodPedidosCliente,
+    updateEstadoConductor,
+    getCodPedidosSSRepartidor,
+    getNoEntregados,
+    getAsigandos
+} = require("./src/services/orderService")
+
+const {
+    insertPago,
+    pagoPorId,
+    updatePago,
+    registrarFactura,
+    getFacturaCliente,
+    getFactura,
+    getResumenFactura
+} = require("./src/services/paymentService")
+
+const {
+    editProd,
     getCategorias,
     insertProduct,
     getProductos,
-    productoPorId,
     getProductosTabla,
-    hacerPedido,
-    getCodPedidos,
-    buscarPorPedido,
-    insertPago,
-    updateEstado,
-    insertGanancias,
-    getGanancias,
-    pagoPorId,
-    updatePago,
-    getCodPedidosSS,
-    buscarPorPedidoSS,
-    getEstadoPed,
-    getRepartidores,
-    updateStockProducts,
-    registrarFactura,
-    authEmailCli,
-    updateCli,
-    authCli,
-    pedidosPorCliente,
-    getCodPedidosCliente,
-    getFactura,
-    getFacturaCliente,
-    getResumenFactura,
-    updateEstadoConductor,
-    getAllRepartidores,
-    updateConductor,
-    getCodPedidosSSRepartidor,
-    getDatosConductor,
-    getNoEntregados,
-    getAsigandos
-} = require("./src/services/consultas");
-
+    productoPorId,
+    updateStockProducts
+} = require("./src/services/productService")
 
 const {
-
-} = require("./src/services/authService")
-
-
+    getProvedores,
+    insertProv,
+    deleteProv
+} = require("./src/services/providerService")
 
 
 
@@ -93,8 +104,9 @@ const port = process.env.PORT || 3000;
 app.use(express.static(__dirname + '/public'));
 
 // Establecer el motor para las vistas
-hbs.registerPartials(__dirname + '/views/partials');
+hbs.registerPartials(__dirname + '/src/views/partials');
 app.set('view engine', 'hbs');
+app.set('views', __dirname + '/src/views');
 
 // Middlewars
 app.use(express.urlencoded({ extended: false }));

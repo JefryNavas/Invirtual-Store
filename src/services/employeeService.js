@@ -1,4 +1,4 @@
-const { pool } = require("../connection/conexion")
+const { pool } = require("../../connection/conexion")
 const getUsers = async() => {
     try {
         const res = await pool.query('select id_empleado,empleado.id_tipo,nombre_tipo,nombre,email,password from empleado,tipo_empleado where empleado.id_tipo = tipo_empleado.id_tipo');
@@ -119,7 +119,7 @@ const getDatosConductor = async(id_cond) => {
     }
 }
 
-export default {
+module.exports = {
     getUsers,
     insertUser,
     deleteUser,

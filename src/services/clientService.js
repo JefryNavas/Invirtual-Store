@@ -1,4 +1,4 @@
-const { pool } = require("../connection/conexion")
+const { pool } = require("../../connection/conexion")
 
 const getGeneros = async() => {
     try {
@@ -61,7 +61,7 @@ const updateCli = async(user, pass) => {
     }
 }
 
-export default {
+module.exports = {
     getGeneros,
     insertCliente,
     getClientes,

@@ -1,4 +1,4 @@
-const { pool } = require("../connection/conexion")
+const { pool } = require("../../connection/conexion")
 
 const getProvedores = async() => {
     try {
@@ -37,7 +37,7 @@ const deleteProv = async(id) => {
     }
 }
 
-export default {
+module.exports = {
     getProvedores,
     insertProv,
     deleteProv

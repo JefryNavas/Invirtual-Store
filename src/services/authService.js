@@ -1,4 +1,4 @@
-const { pool } = require("../connection/conexion")
+const { pool } = require("../../connection/conexion")
 const authUser = async(email, pass) => {
     try {
         const res = await pool.query(`select * from empleado where email='${email}' and password = '${pass}'`);
@@ -48,7 +48,7 @@ const authEmailCli = async(email) => {
         return error.message;
     }
 }
-export default {
+module.exports = {
     authUser,
     authCli,
     authEmail,

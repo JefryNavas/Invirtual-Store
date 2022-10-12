@@ -1,4 +1,4 @@
-const { pool } = require("../connection/conexion")
+const { pool } = require("../../connection/conexion")
 const { fechaActual } = require('../controller/control');
 
 const getCodPedidos = async() => {
@@ -173,7 +173,7 @@ const getAsigandos = async() => {
     }
 }
 
-export default {
+module.exports = {
     getCodPedidos,
     getCodPedidosSS,
     hacerPedido,
