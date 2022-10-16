@@ -318,7 +318,7 @@ const registrarFact = async (req, res) => {
 
 // Vista de pago para el administrador
 const vistaPagoAdministrador = async (req, res) => {
-  if (req.session.loggedinAdmin) {
+  if (req.session.loggedinAdmin || req.session.loggedinRepartidor) {
     let user = req.session.user;
     const codigo = req.body.id;
     let actualizar = await updateEstadoConductor(codigo);
@@ -366,7 +366,7 @@ const vistaPagoAdministrador = async (req, res) => {
 
 // Vista pagos para el Repartidor
 const vistaPagoRepartidor = async (req, res) => {
-  if (req.session.loggedinRepartidor) {
+  if (req.session.loggedinRepartidor || req.session.loggedinAdmin) {
     let user = req.session.user;
     const codigo = req.body.id;
     let actualizar = await updateEstadoConductor(codigo);
