@@ -4,7 +4,7 @@ const hbs = require("hbs");
 const session = require("express-session");
 
 // Helpers
-require("./src/helpers/helpers");
+require("./src/model/helpers/helpers");
 
 //Puerto
 const port = process.env.PORT || 3000;
@@ -23,17 +23,17 @@ app.use(express.json());
 
 // express session
 app.use(
-  session({
-    secret: "secret",
-    resave: true,
-    saveUninitialized: true,
-  })
+    session({
+        secret: "secret",
+        resave: true,
+        saveUninitialized: true,
+    })
 );
 
 // Rutas de la página web
-const routes = require("./src/routes/routes");
+const routes = require("./src/controllers/routes/routes");
 app.use(routes);
 
 app.listen(port, () => {
-  console.log("Servidor Iniciado, escuchando el puerto 3000");
+    console.log("Servidor Iniciado, escuchando el puerto 3000");
 });

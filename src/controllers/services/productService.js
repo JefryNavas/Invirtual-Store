@@ -1,4 +1,4 @@
-const { pool } = require("../../src/connection/conexion")
+const { pool } = require("../../model/connection/conexion")
 const editProd = async(id, nombre, material, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
     try {
         const consulta = `update producto set nombre_prod = '${nombre}', material = '${material}', color = '${color}', stock = '${stock}', precio_mercado = '${precioMer}', precio_proveedor = '${precioProv}',cm = '${cm}',talla = '${talla}', peso = '${peso}', origen = '${origen}' where cod_prod = ${id}`

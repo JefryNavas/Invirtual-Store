@@ -1,5 +1,5 @@
-const { pool } = require("../../src/connection/conexion")
-const { fechaActual } = require('../helpers/cluster');
+const { pool } = require("../../model/connection/conexion")
+const { fechaActual } = require('../../model/helpers/cluster');
 
 const getCodPedidos = async() => {
     try {
