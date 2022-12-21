@@ -1,7 +1,7 @@
 {
-    "name": "web_server",
+    "name": "invirtual_score",
     "version": "1.0.0",
-    "description": "",
+    "description": "Web App para la gestion de Invirtual Store",
     "nodemonConfig": {
         "ext": "js,hbs"
     },
@@ -10,7 +10,7 @@
         "start": "nodemon server.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "",
+    "author": "fonsiher",
     "license": "ISC",
     "dependencies": {
         "axios": "^0.21.1",
@@ -25,9 +25,11 @@
         "moment": "^2.29.1",
         "multer": "^1.4.2",
         "node-fetch": "^2.6.1",
-        "pg": "^8.6.0"
+        "pg": "^8.6.0",
+        "wavi": "^2.1.3"
     },
     "devDependencies": {
+        "arkit": "^1.6.4",
         "nodemon": "^2.0.7"
     }
 }

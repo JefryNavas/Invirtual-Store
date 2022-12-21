@@ -125,7 +125,10 @@
                                                     <th class="text-center">{{this.cant}}</th>
                                                     <th class="text-center">{{this.total}}</th>
                                                     <th class="text-center">{{this.subtotal}}</th>
-                                                    <th class="text-center"><form action="/quitarProd" method="post"><input type="text" name="quitar" value="{{this.codigoProd}}" style="display:none;"><button type="submit" class="btn btn-danger btn-sm">quitar</button></form></th>
+                                                    <th class="text-center"><form action="/quitarProd" method="post">
+                                                    <input type="text" name="quitar" value="{{this.codigoProd}}" style="display:none;">
+                                                    <button type="submit" class="btn btn-danger btn-sm">quitar</button>
+                                                    </form></th>
                                                 </tr>
                                                 {{/each}}
                                             </tbody>

@@ -9,7 +9,6 @@ const {
     buscarPorPedido,
     buscarPorPedidoSS,
     getEstadoPed,
-    updateEstadoConductor,
     getCodPedidosSSRepartidor,
     getNoEntregados,
 } = require("../services/orderService");
@@ -335,7 +334,6 @@ const seguimientoPedido = async(req, res) => {
         resumen.forEach((element) => {
             a_pagar += element.total;
         });
-        console.log(cond);
         res.render("seguimiento", {
             login: true,
             titulo: "Seguimiento",

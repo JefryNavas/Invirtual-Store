@@ -1,0 +1,25 @@
+{
+    "$schema": "https://arkit.pro/schema.json",
+    "excludePatterns": ["test/**", "tests/**", "**/*.test.*", "**/*.spec.*", "**/*.min.*"],
+    "components": [{
+            "type": "Dependency",
+            "patterns": ["node_modules/*"]
+        },
+        {
+            "type": "Component",
+            "patterns": ["**/*.js,", "**/*.hbs"]
+        }
+    ],
+    "output": [{
+        "path": "src/arkitfinal.puml",
+        "groups": [{
+                "first": true,
+                "components": ["Component"]
+            },
+            {
+                "type": "Dependencies",
+                "components": ["Dependency"]
+            }
+        ]
+    }]
+}
