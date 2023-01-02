@@ -146,7 +146,7 @@ const facturasCliente = async(req, res) => {
         let facturas = await getFacturaCliente(cedula);
         res.render("tusFacturas", {
             login: true,
-            titulo: "Facturas",
+            titulo: "Nota de Venta",
             tipo: "cliente",
             name: user.nombre,
             facturas,
@@ -166,7 +166,7 @@ const facturaResumenCliente = async(req, res) => {
         let detalle = await buscarPorPedido(codped);
         res.render("tusFacturas", {
             login: true,
-            titulo: "Detalle Factura",
+            titulo: "Detalle Nota de Venta",
             tipo: user.tipo,
             name: user.nombre,
             codped,
@@ -193,7 +193,7 @@ const tablaFacturas = async(req, res) => {
         let facturas = await getFactura();
         res.render("tableFacturas", {
             login: true,
-            titulo: "Facturas",
+            titulo: "Nota de Venta",
             tipo: "cliente",
             name: user.nombre,
             facturas,
@@ -213,7 +213,7 @@ const facturaResumen = async(req, res) => {
         let detalle = await buscarPorPedido(codped);
         res.render("tableFacturas", {
             login: true,
-            titulo: "Detalle Factura",
+            titulo: "Detalle Nota de Venta",
             tipo: user.tipo,
             name: user.nombre,
             codped,
@@ -297,7 +297,7 @@ const registrarFact = async(req, res) => {
         res.render("listaPedidos", {
             login: true,
             alert: true,
-            alertTitle: "Factura Guardada",
+            alertTitle: "Nota de Venta Guardada",
             alertMessage: msg,
             icon: "success",
             timer: 1500,
@@ -307,7 +307,7 @@ const registrarFact = async(req, res) => {
         res.render("tablePendientes", {
             login: true,
             alert: true,
-            alertTitle: "Factura Guardada",
+            alertTitle: "Nota de Venta Guardada",
             alertMessage: msg,
             icon: "success",
             timer: 1500,
