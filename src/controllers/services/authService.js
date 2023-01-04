@@ -1,4 +1,4 @@
-const { pool } = require("../../src/connection/conexion")
+const { pool } = require("../../model/connection/conexion")
 const authUser = async(email, pass) => {
     try {
         const res = await pool.query(`select * from empleado where email='${email}' and password = '${pass}'`);

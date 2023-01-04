@@ -1,4 +1,4 @@
-const { pool } = require("../../src/connection/conexion")
+const { pool } = require("../../model/connection/conexion")
 
 const insertPago = async(fecha, cedula, monto, saldo, tipo_pago, forma, empleado, cod_pedido) => {
     try {

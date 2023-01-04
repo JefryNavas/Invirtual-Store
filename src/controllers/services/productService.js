@@ -1,4 +1,4 @@
-const { pool } = require("../../src/connection/conexion")
+const { pool } = require("../../model/connection/conexion")
 const editProd = async(id, nombre, material, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
     try {
         const consulta = `update producto set nombre_prod = '${nombre}', material = '${material}', color = '${color}', stock = '${stock}', precio_mercado = '${precioMer}', precio_proveedor = '${precioProv}',cm = '${cm}',talla = '${talla}', peso = '${peso}', origen = '${origen}' where cod_prod = ${id}`
@@ -24,9 +24,9 @@ const getCategorias = async() => {
 }
 
 
-const insertProduct = async(nombre, prov, cat, img, mate, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
+const insertProduct = async(nombre, prov, cat, img, mate, color, talla, stock, precioMer, precioProv) => {
     try {
-        const consulta = `insert into producto (nombre_prod,id_cat,cod_prov,material,color,stock,precio_mercado,precio_proveedor,foto,cm,talla,origen,peso) values ('${nombre}','${cat}','${prov}','${mate}','${color}','${stock}','${precioMer}','${precioProv}','${img}','${cm}','${talla}','${origen}','${peso}')`
+        const consulta = `insert into producto (nombre_prod,id_cat,cod_prov,material,color,stock,precio_mercado,precio_proveedor,foto,talla) values ('${nombre}','${cat}','${prov}','${mate}','${color}','${stock}','${precioMer}','${precioProv}','${img}','${talla}')`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
             return "Producto registrado";

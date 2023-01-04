@@ -1,0 +1,151 @@
+@startuml
+
+scale max 1920 width
+left to right direction
+
+skinparam nodesep 21
+skinparam ranksep 41
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Tahoma
+skinparam defaultFontSize 12
+skinparam roundCorner 6
+skinparam dpi 150
+skinparam arrowColor black
+skinparam arrowThickness 0.5
+skinparam packageTitleAlignment left
+
+' oval
+skinparam usecase {
+  borderThickness 0.5
+}
+
+' rectangle
+skinparam rectangle {
+  borderThickness 0.5
+}
+
+' component
+skinparam component {
+  borderThickness 1
+}
+
+package "Dependencies" {
+  [axios]
+  [express]
+  [multer]
+  [express-session]
+  [pg]
+  [fs]
+}
+
+package "Model" {
+  (conexion)
+  (cluster)
+  (helpers)
+}
+
+package "Controller" {
+(auth.controller)
+(authService)
+(client.controller)
+(clientService)
+(employee.controller)
+(employeeService)
+(order.controller)
+(orderService)
+(payment.controller)
+(paymentService)
+(product.controller)
+(productService)
+(provider.controller)
+(providerService)
+(routes)
+}
+package "View" {
+(<b>admin</b>)
+(<b>cliente</b>)
+(<b>empleado</b>)
+(<b>nota-venta</b>)
+(<b>login</b>)
+(<b>pagos</b>)
+(<b>pedido</b>)
+(<b>producto</b>)
+(<b>repartidor</b>)
+(<b>seguimiento</b>)
+}
+
+(<b>app</b>)
+(auth.controller)
+(authService)
+(client.controller)
+(clientService)
+(cluster)
+(cluster) ----> [axios]
+(conexion) ----> [pg]
+(employee.controller)
+(employeeService)
+(helpers)
+(order.controller)
+(orderService)
+(payment.controller)
+(paymentService)
+(product.controller)
+(productService)
+(provider.controller)
+(providerService)
+(routes)
+
+(<b>app</b>) ---[thickness=1]> (helpers)
+(<b>app</b>) ---[thickness=1]> (routes)
+(<b>app</b>) ----> [express]
+(<b>app</b>) ----> [express-session]
+(auth.controller) --> (authService)
+(authService) ----> (conexion)
+(client.controller) --> (authService)
+(client.controller) --> (clientService)
+(clientService) ----> (conexion)
+(employee.controller) --> (authService)
+(employee.controller) --> (employeeService)
+(employeeService) ----> (conexion)
+(order.controller) ----> (cluster)
+(order.controller) --> (employeeService)
+(order.controller) --> (orderService)
+(order.controller) --> (productService)
+(orderService) ----> (cluster)
+(orderService) ----> (conexion)
+(payment.controller) --> (clientService)
+(payment.controller) --> (employeeService)
+(payment.controller) --> (orderService)
+(payment.controller) --> (paymentService)
+(paymentService) ----> (conexion)
+(product.controller) --> (productService)
+(product.controller) --> (providerService)
+(product.controller) --> [fs]
+(productService) ----> (conexion)
+(provider.controller) --> (providerService)
+(providerService) ----> (conexion)
+(routes) --> (auth.controller)
+(routes) --> (client.controller)
+(routes) --> (employee.controller)
+(routes) --> (order.controller)
+(routes) --> (payment.controller)
+(routes) --> (product.controller)
+(routes) --> (provider.controller)
+(routes) --> [express]
+(routes) --> [multer]
+
+(<b>admin</b>)---[thickness=1]> (routes)
+(<b>cliente</b>)---[thickness=1]> (routes)
+(<b>empleado</b>)---[thickness=1]> (routes)
+(<b>nota-venta</b>)---[thickness=1]> (routes)
+(<b>login</b>)---[thickness=1]> (routes)
+(<b>pagos</b>)---[thickness=1]> (routes)
+(<b>pedido</b>)---[thickness=1]> (routes)
+(<b>producto</b>)---[thickness=1]> (routes)
+(<b>repartidor</b>)---[thickness=1]> (routes)
+(<b>seguimiento</b>)---[thickness=1]> (routes)
+
+@enduml
+
+' View and edit on https://arkit.pro
