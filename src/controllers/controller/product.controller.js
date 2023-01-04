@@ -43,41 +43,47 @@ const registrarProducto = async(req, res) => {
         categoria: req.body.categoria,
         imagen: storage.filename,
         material: req.body.material,
-        peso: req.body.peso,
-        cm: req.body.cm,
         color: req.body.color,
         talla: req.body.talla,
-        origen: req.body.origen,
         stock: req.body.stock,
         precioMer: req.body.precioMer,
         precioProv: req.body.precioProv,
     };
     const tempPath = req.file.path;
     const targetPath = path.join(__dirname, tempPath);
-    let msg = await insertProduct(
+    let msgProducto = await insertProduct(
         producto.nombre,
         producto.proveedor,
         producto.categoria,
         targetPath,
         producto.material,
-        producto.peso,
-        producto.cm,
         producto.color,
         producto.talla,
-        producto.origen,
         producto.stock,
         producto.precioMer,
         producto.precioProv
     );
-
-    res.render("producto", {
-        tipo: user.tipo,
-        alert: true,
-        alertTitle: msg,
-        icon: "success",
-        timer: 1700,
-        ruta: "producto",
-    });
+    if (msgProducto === 'Producto registrado') {
+        res.render("producto", {
+            tipo: user.tipo,
+            alert: true,
+            alertTitle: 'Producto registrado correctamente',
+            alertMessage: msgProducto,
+            icon: "success",
+            timer: 1700,
+            ruta: "producto",
+        });
+    } else {
+        res.render("producto", {
+            tipo: user.tipo,
+            alert: true,
+            alertTitle: 'Error al registrar al producto',
+            alertMessage: msgProducto,
+            icon: "error",
+            // timer: 3700,
+            ruta: "producto",
+        });
+    }
 };
 // Tabla Productos
 const tablaProductos = async(req, res) => {

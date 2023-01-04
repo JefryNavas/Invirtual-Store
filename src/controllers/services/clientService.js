@@ -48,9 +48,7 @@ const buscarPorCed = async(cedula) => {
 const updateCli = async(user, pass) => {
     try {
         const consulta = `update cliente set password = '${pass}' where cedula_cli = '${user.cedula_cli}'`
-        console.log(consulta);
         const res = await pool.query(consulta);
-        console.log(res);
         if (res.rowCount == 1) {
             return "Cliente Atualizado";
         } else

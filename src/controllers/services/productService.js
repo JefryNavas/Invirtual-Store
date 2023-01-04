@@ -24,9 +24,9 @@ const getCategorias = async() => {
 }
 
 
-const insertProduct = async(nombre, prov, cat, img, mate, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
+const insertProduct = async(nombre, prov, cat, img, mate, color, talla, stock, precioMer, precioProv) => {
     try {
-        const consulta = `insert into producto (nombre_prod,id_cat,cod_prov,material,color,stock,precio_mercado,precio_proveedor,foto,cm,talla,origen,peso) values ('${nombre}','${cat}','${prov}','${mate}','${color}','${stock}','${precioMer}','${precioProv}','${img}','${cm}','${talla}','${origen}','${peso}')`
+        const consulta = `insert into producto (nombre_prod,id_cat,cod_prov,material,color,stock,precio_mercado,precio_proveedor,foto,talla) values ('${nombre}','${cat}','${prov}','${mate}','${color}','${stock}','${precioMer}','${precioProv}','${img}','${talla}')`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
             return "Producto registrado";
