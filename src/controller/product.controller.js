@@ -2,6 +2,7 @@ const path = require("path");
 const mimeTypes = require("mime-types");
 const multer = require("multer");
 const {
+  editProd,
   getCategorias,
   insertProduct,
   getProductosTabla,
@@ -10,7 +11,9 @@ const {
 const { getProvedores } = require("../services/providerService");
 
 const storage = multer.diskStorage({
-  destination: "../../uploads/",
+  destination: function (req, file, cb) {
+    cb(null, __dirname);
+  },
   filename: function (req, file, cb) {
     cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
   },
