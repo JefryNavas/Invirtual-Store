@@ -11,7 +11,7 @@ const {
 const { getProvedores } = require("../services/providerService");
 
 const storage = multer.diskStorage({
-  destination: "../../uploads/",
+  destination: "../../../public/assets/uploads",
   filename: function (req, file, cb) {
     cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
   },
