@@ -78,11 +78,14 @@ const {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(process.cwd(), '/uploads');
   },
   filename: function (req, file, cb) {
     cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
   },
+  limits: {
+    fileSize: 1024 * 1024 * 2,
+  }
 });
 
 const upload = multer({
