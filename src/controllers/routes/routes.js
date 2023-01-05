@@ -77,9 +77,7 @@ const {
 } = require("../controller/payment.controller");
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(process.cwd(), '/uploads');
-  },
+  destination: "../../../public/assets/uploads",
   filename: function (req, file, cb) {
     cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
   },
