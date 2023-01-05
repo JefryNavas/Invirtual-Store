@@ -11,10 +11,15 @@ const {
 const { getProvedores } = require("../services/providerService");
 
 const storage = multer.diskStorage({
-  destination: "../../../public/assets/uploads",
+  destination: function (req, file, cb) {
+    cb(process.cwd(), '/uploads');
+  },
   filename: function (req, file, cb) {
     cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
   },
+  limits: {
+    fileSize: 1024 * 1024 * 2,
+  }
 });
 
 const producto = async (req, res) => {
