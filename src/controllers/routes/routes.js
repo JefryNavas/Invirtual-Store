@@ -98,7 +98,7 @@ router.get("/cliente", cliente);
 router.get("/producto", producto);
 router.get("/pedido", pedido);
 router.get("/proveedor", proveedor);
-router.get("/register", register);
+router.post("/register", register);
 router.post("/producto", upload.single("imagen"), registrarProducto);
 router.post("/auth", authEmployee);
 router.get("/logout", logout);

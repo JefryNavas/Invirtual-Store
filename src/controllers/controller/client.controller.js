@@ -126,7 +126,7 @@ const actulizarCliente = async(req, res) => {
     if (user.pass2 == user.pass) {
         let usuario = await authEmailCli(user.email);
         if (usuario[0]) {
-            const updCliente = updateCli(usuario[0], user.pass);
+            const updCliente = await updateCli(usuario[0], user.pass);
             if (updCliente === 'Cliente Atualizado') {
                 res.render("login", {
                     alert: true,
