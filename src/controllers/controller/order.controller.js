@@ -60,6 +60,7 @@ const nuevoPedido = async(req, res) => {
                 nuevoP: req.session.nuevoPro,
                 productos: req.session.productos,
                 prod: req.session.prod,
+                currentDate: new Date().toISOString().slice(0, 10),
                 cliente: null,
             });
         }
@@ -107,6 +108,7 @@ const addProducto = async(req, res) => {
                 productos: req.session.productos,
                 cliente: req.session.cliente,
                 prod: req.session.prod,
+                currentDate: new Date().toISOString().slice(0, 10),
                 nuevoP: req.session.nuevoPro,
             });
         } else {
@@ -119,6 +121,7 @@ const addProducto = async(req, res) => {
                 tipo: user.tipo,
                 alert: true,
                 alertMessage: "No existe stock suficiente para el producto requerido",
+                currentDate: new Date().toISOString().slice(0, 10),
                 icon: "error",
                 timer: 1700,
                 ruta: "pedido",
@@ -151,6 +154,7 @@ const quitarProducto = async(req, res) => {
             productos: req.session.productos,
             prod: req.session.prod,
             cliente: req.session.cliente,
+            currentDate: new Date().toISOString().slice(0, 10),
         });
     }
 };
@@ -174,6 +178,7 @@ const hacerPedidoView = async(req, res) => {
             titulo: "Pedido",
             name: user.nombre,
             tipo: user.tipo,
+            currentDate: new Date().toISOString().slice(0, 10),
             alert: true,
             alertMessage: msg,
             icon: "success",
@@ -360,11 +365,15 @@ const tablaPedidosNoEntregados = async(req, res) => {
         var localTime = moment().format("YYYY-MM-DD");
         let pedidosHoy = [];
         let pedidosDemas = [];
+        let pedidosAtrasados = [];
         codped.forEach((element) => {
-            if (element.fecha_entrega == localTime) {
+            const shortdate = element.fecha_entrega.toISOString().slice(0, 10)
+            if (shortdate == localTime) {
                 pedidosHoy.push(element);
-            } else {
+            } else if (shortdate > localTime) {
                 pedidosDemas.push(element);
+            } else {
+                pedidosAtrasados.push(element);
             }
         });
         let repartidores = Repartidores.length;
@@ -376,6 +385,7 @@ const tablaPedidosNoEntregados = async(req, res) => {
             codped,
             pedidosHoy,
             pedidosDemas,
+            pedidosAtrasados,
             repartidores,
             localTime,
             loading: false,

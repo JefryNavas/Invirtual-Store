@@ -97,7 +97,6 @@
                         </div>
                     </div>
                     <hr>
-                    <hr>
                      <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h6 class="m-0 font-weight-bold text-primary">Lista de Pedidos para días posteriores: </h6>
@@ -115,16 +114,45 @@
                                     </thead>
                                     <tbody>
                                         {{#each pedidosDemas}}
-                                        <tr>
-                                            {{!-- {{#if (or (eq this.estado "No entregado") (eq this.estado "Pedido Registrado") (eq this.estado "Conductor Asignado") (eq this.estado "Conductor en Camino") ) }} --}}
-                                         
+                                        <tr>                                       
                                             <th class="text-center">{{this.cod_ped}}</th>
                                             <th class="text-center">{{this.fecha_entrega}}</th>
                                             <th class="text-center">{{this.estado}}</th>
                                             <th class="text-center">
                                                 <form action="/tableNoEntregados" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form>
-                                            </th>
-                                          
+                                            </th>                                       
+                                        </tr>
+                                        {{/each}}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Lista de Pedidos Caducados: </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Código Pedido</th>
+                                            <th class="text-center">Fecha de Entrega</th>
+                                            <th class="text-center">Estado</th>
+                                            <th class="text-center">Detalles</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each pedidosAtrasados}}
+                                        <tr>                                       
+                                            <th class="text-center">{{this.cod_ped}}</th>
+                                            <th class="text-center">{{this.fecha_entrega}}</th>
+                                            <th class="text-center">{{this.estado}}</th>
+                                            <th class="text-center">
+                                                <form action="/tableNoEntregados" method="post"><input type="text" name="id" value="{{this.cod_ped}}" style="display:none;"><button type="submit" class="btn btn-primary btn-circle"><i class="fas fa-box-open"></i></button></form>
+                                            </th>                                       
                                         </tr>
                                         {{/each}}
 

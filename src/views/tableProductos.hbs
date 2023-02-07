@@ -42,9 +42,6 @@
                                 <div class="form-group">
                                     Peso: <input type="number" class="form-control" placeholder="Peso en kg... (Opcional)" value="{{producto.peso}}" name="peso" value="">
                                 </div>
-                                <div class="form-group">
-                                    Tamaño: <input type="number" class="form-control" placeholder="Tamaño en cm...(Opcional)" value="{{producto.cm}}" name="cm">
-                                </div>
                             </div>
                             <div class="col-sm-12 col-lg-6">
                                 <div class="form-group">
@@ -53,14 +50,7 @@
                                 <div class="form-group">
                                     Talla: <input type="text" class="form-control" placeholder="Talla (Opcional)..." value="{{producto.talla}}" name="talla" value="">
                                 </div>
-                                <div class="form-group">
-                                    Origen: <select class="form-control" style="border-radius: 10rem" name="origen" required>
-                                <option selected value="{{producto.origen}}">{{producto.origen}}</option>
-                                <option>Estados Unidos</option>
-                                <option>Ecuador</option>
-                                <option>China</option>
-                            </select>
-                                </div>
+
                                 <div class="form-group">
                                     Stock: <input type="number" class="form-control" placeholder="N° Stock..." value="{{producto.stock}}" name="stock" required min="1">
                                 </div>

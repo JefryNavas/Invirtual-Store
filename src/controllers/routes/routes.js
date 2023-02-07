@@ -1,93 +1,93 @@
 const express = require("express");
 const {
-  cliente,
-  tablaClientes,
-  registerCliente,
-  buscarCliente,
-  actulizarCliente,
-  authCliente,
-  client,
+    cliente,
+    tablaClientes,
+    registerCliente,
+    buscarCliente,
+    actulizarCliente,
+    authCliente,
+    client,
 } = require("../controller/client.controller");
 const {
-  empleado,
-  repartidor,
-  admin,
-  register,
-  tableEmployee,
-  editTableEmployee,
-  editEmployee,
-  deleteEmployee,
-  tablaGanancias,
-  tablaRepartidores,
+    empleado,
+    repartidor,
+    admin,
+    register,
+    tableEmployee,
+    editTableEmployee,
+    editEmployee,
+    deleteEmployee,
+    tablaGanancias,
+    tablaRepartidores,
 } = require("../controller/employee.controller");
 const {
-  login,
-  authEmployee,
-  logout,
+    login,
+    authEmployee,
+    logout,
 } = require("../controller/auth.controller");
 const {
-  pedido,
-  nuevoPedido,
-  addProducto,
-  quitarProducto,
-  hacerPedidoView,
-  tablaPedidos,
-  asignadosTodos,
-  asignadosResumen,
-  repartirPedidos,
-  seguimientoPedido,
-  tusPedidosCliente,
-  tusPedidosResumen,
-  tablaPedidosNoEntregados,
-  pedidoNoEntregadoResumen,
-  tablaPedidosPendientesPago,
-  pedidoPendientePagoResumen,
-  pedidosResumen,
-  tablaPedidosRepartidor,
-  pedidoRepartidorResumen,
+    pedido,
+    nuevoPedido,
+    addProducto,
+    quitarProducto,
+    hacerPedidoView,
+    tablaPedidos,
+    asignadosTodos,
+    asignadosResumen,
+    repartirPedidos,
+    seguimientoPedido,
+    tusPedidosCliente,
+    tusPedidosResumen,
+    tablaPedidosNoEntregados,
+    pedidoNoEntregadoResumen,
+    tablaPedidosPendientesPago,
+    pedidoPendientePagoResumen,
+    pedidosResumen,
+    tablaPedidosRepartidor,
+    pedidoRepartidorResumen,
 } = require("../controller/order.controller");
 const {
-  producto,
-  registrarProducto,
-  tablaProductos,
-  editarProducto,
-  mostrarProducto,
+    producto,
+    registrarProducto,
+    tablaProductos,
+    editarProducto,
+    mostrarProducto,
 } = require("../controller/product.controller");
 const {
-  proveedor,
-  tablaProveedor,
-  deleteProveedor,
-  registrarProveedor,
+    proveedor,
+    tablaProveedor,
+    deleteProveedor,
+    registrarProveedor,
 } = require("../controller/provider.controller");
 const router = express.Router();
 const multer = require("multer");
 const mimeTypes = require("mime-types");
 const {
-  pagos,
-  registrarPagos,
-  facturasCliente,
-  facturaResumenCliente,
-  tablaFacturas,
-  facturaResumen,
-  pagosPendientesCliente,
-  pagosPendientesResumen,
-  registrarFact,
-  vistaPagoAdministrador,
-  vistaPagoRepartidor,
+    pagos,
+    registrarPagos,
+    facturasCliente,
+    facturaResumenCliente,
+    tablaFacturas,
+    facturaResumen,
+    pagosPendientesCliente,
+    pagosPendientesResumen,
+    registrarFact,
+    vistaPagoAdministrador,
+    vistaPagoRepartidor,
 } = require("../controller/payment.controller");
 
 const storage = multer.diskStorage({
-  destination: "../../../public/assets/uploads",
-  filename: function (req, file, cb) {
-    cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
-  },
-  limits: {
-    fileSize: 1024 * 1024 * 2,
-  }
+    destination: "../../../public/assets/uploads",
+    filename: function(req, file, cb) {
+        cb("", Date.now() + "." + mimeTypes.extension(file.mimetype));
+    },
+    limits: {
+        fileSize: 1024 * 1024 * 2,
+    }
 });
 
 const upload = multer({
-  storage: storage,
+    storage: storage,
 });
 
 router.get("/", login);
@@ -98,7 +98,7 @@ router.get("/cliente", cliente);
 router.get("/producto", producto);
 router.get("/pedido", pedido);
 router.get("/proveedor", proveedor);
-router.get("/register", register);
+router.post("/register", register);
 router.post("/producto", upload.single("imagen"), registrarProducto);
 router.post("/auth", authEmployee);
 router.get("/logout", logout);

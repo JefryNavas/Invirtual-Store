@@ -73,9 +73,7 @@
                             </div>
 
                         </div>
-
                         <div class="col-7">
-
                             <form action="/addprod" class="text-center" method="POST">
                                 <div class="row">
                                     <div class="col-12 py-3">
@@ -94,7 +92,6 @@
                                                 {{/each}}
                                                 
                                              </select>
-                                            
                                              <input type="number" class="box" placeholder="Cantidad" name="cantidad" required min="1" max="10">
                                              <button type="submit" class="btn-primary"><i class="fas fa-plus"> Añadir</i></button>
                                                                                        
@@ -137,22 +134,14 @@
                                     
                                     {{#if productos}}
                                     <button class="btn btn-primary" data-toggle="modal" data-target="#modalPedido">Hacer Pedido</button>
-                                    {{/if}}
-                                    
+                                    {{/if}}                                 
                                 </div>
                             </div>
-
-
-
                         </div>
                     </div>
                     {{/if}} {{/if}}
-
-
                 </div>
             </div>
-
-
             {{> footer}}
         </div>
     </div>

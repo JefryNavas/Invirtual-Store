@@ -1,14 +1,14 @@
 const { pool } = require("../../model/connection/conexion")
-const editProd = async(id, nombre, material, peso, cm, color, talla, origen, stock, precioMer, precioProv) => {
+const editProd = async(id, nombre, material, color, talla, stock, precioMer, precioProv) => {
     try {
-        const consulta = `update producto set nombre_prod = '${nombre}', material = '${material}', color = '${color}', stock = '${stock}', precio_mercado = '${precioMer}', precio_proveedor = '${precioProv}',cm = '${cm}',talla = '${talla}', peso = '${peso}', origen = '${origen}' where cod_prod = ${id}`
-        console.log(consulta);
+        const consulta = `update producto set nombre_prod = '${nombre}', material = '${material}', color = '${color}', stock = ${stock}, precio_mercado = ${precioMer}, precio_proveedor = ${precioProv},talla = '${talla}' where cod_prod = ${id}`
         const res = await pool.query(consulta);
         if (res.rowCount == 1) {
             return "Producto Modificado Correctamente";
         } else
             return "No existe el Producto";
     } catch (error) {
+        console.log(error.message)
         return error.message;
     }
 }
